@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Code, Gamepad2, Trophy, Users, Zap } from 'lucide-react'
-import Scene3D from '../components/3d/Scene3D'
+import HeroMedia from '../components/HeroMedia'
 
 const HomePage = () => {
   const features = [
@@ -36,11 +36,13 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
+      <section className="relative overflow-hidden py-24 lg:py-36">
+        {/* Full-bleed animated background */}
+        <HeroMedia background />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Content */}
-            <div className="text-center lg:text-left">
+          <div className="grid grid-cols-1 items-center">
+            {/* Content over scene */}
+            <div className="text-center lg:text-left relative z-10">
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
                 <span className="text-gradient">Learn to Code</span>
                 <br />
@@ -61,13 +63,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* 3D Preview */}
-            <div className="relative">
-              <div className="aspect-square max-w-lg mx-auto">
-                <Scene3D />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-3xl -z-10"></div>
-            </div>
+            {/* Removed the foreground media card to let the scene be the background */}
           </div>
         </div>
 

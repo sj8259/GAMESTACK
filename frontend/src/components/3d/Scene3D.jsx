@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Environment, Text } from '@react-three/drei'
+import { OrbitControls, Environment, Float, Sparkles, Stars, Trail } from '@react-three/drei'
 import { useMemo } from 'react'
 import * as THREE from 'three'
 
@@ -188,32 +188,26 @@ function SceneContent() {
         />
       ))}
 
-      {/* Floating title */}
-      <Text
-        position={[0, 3, 0]}
-        fontSize={1}
-        color="#3b82f6"
-        anchorX="center"
-        anchorY="middle"
-        font="/fonts/inter-bold.woff"
-      >
-        GameStack
-      </Text>
+      {/* Decorative sparkles and stars */}
+      <Float speed={2} rotationIntensity={0.3} floatIntensity={0.6}>
+        <Sparkles count={40} scale={[6, 3, 6]} speed={0.3} size={1.5} color="#8b5cf6" />
+      </Float>
+      <Stars radius={30} depth={20} count={2000} factor={4} saturation={0} fade speed={0.5} />
     </>
   )
 }
 
 // Main Scene3D component
-const Scene3D = () => {
+const Scene3D = ({ fullscreen = false }) => {
   return (
-    <div className="w-full h-full rounded-2xl overflow-hidden bg-slate-900">
+    <div className={fullscreen ? 'w-full h-full' : 'w-full h-full rounded-2xl overflow-hidden bg-slate-900'}>
       <Canvas
         camera={{ 
           position: [8, 6, 8], 
           fov: 60 
         }}
         shadows
-        className="rounded-2xl"
+        className={fullscreen ? 'w-full h-full' : 'rounded-2xl'}
       >
         <SceneContent />
         <OrbitControls 

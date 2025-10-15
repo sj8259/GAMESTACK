@@ -110,13 +110,7 @@ const seedDatabase = async () => {
     console.log('🎯 Added sample progress data')
 
     console.log('\n🎉 Database seeded successfully!')
-    console.log('\nDemo account:')
-    console.log('  Email: demo@gamestack.dev')
-    console.log('  Password: demo123')
-    console.log('\nTest accounts:')
-    console.log('  alice@example.com / password123')
-    console.log('  bob@example.com / password123')
-    console.log('  charlie@example.com / password123')
+    console.log('\nDemo account created (credentials hidden in logs for security).')
 
   } catch (error) {
     console.error('❌ Error seeding database:', error)

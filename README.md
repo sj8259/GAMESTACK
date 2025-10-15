@@ -58,11 +58,11 @@ A gamified code learning platform inspired by Apple's Swift Playgrounds. Learn p
    cp config.env.example config.env
    ```
    
-   Edit `backend/config.env` with your configuration:
+   Create and edit `backend/config.env` with your configuration (do not commit real secrets):
    ```env
    PORT=5000
    MONGODB_URI=mongodb://localhost:27017/gamestack
-   JWT_SECRET=your_super_secret_jwt_key_here
+   JWT_SECRET=change_me
    NODE_ENV=development
    ```
 
@@ -203,10 +203,10 @@ gamestack/
 
 ### Environment Variables
 ```env
-# Production
+# Production (example placeholders; set in your hosting provider's env vars)
 NODE_ENV=production
-MONGODB_URI=mongodb+srv://...
-JWT_SECRET=your_production_secret
+MONGODB_URI=${MONGODB_URI}
+JWT_SECRET=${JWT_SECRET}
 PORT=5000
 ```
 
