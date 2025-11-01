@@ -25,7 +25,9 @@ const GamePage = () => {
     worldState,
     resetGame,
     enqueueAction,
-    runQueue
+    runQueue,
+    error: gameStoreError,
+    obstacleHit
   } = useGameStore()
 
 
@@ -121,6 +123,11 @@ const GamePage = () => {
 
       if (!result.success) {
         setExecutionError(result.error)
+      }
+      
+      // Check if obstacle was hit
+      if (gameStoreError && gameStoreError.includes('Obstacle hit')) {
+        setExecutionError(gameStoreError)
       }
     } catch (error) {
       console.error('Code execution error:', error)
@@ -279,7 +286,7 @@ const GamePage = () => {
             <CodeEditor
               onRunCode={handleRunCode}
               isRunning={isExecuting}
-              error={executionError}
+              error={executionError || gameStoreError}
               isCompleted={isCompleted}
             />
           </div>

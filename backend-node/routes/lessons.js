@@ -3,17 +3,22 @@ const { body, validationResult } = require('express-validator');
 const Lesson = require('../models/Lesson');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const optionalAuth = require('../middleware/optionalAuth');
 
 const router = express.Router();
 
 // @route   GET /api/lessons
-// @desc    Get all published lessons
-// @access  Public
-router.get('/', async (req, res) => {
+// @desc    Get all published lessons (all lessons for admins)
+// @access  Public (with admin privileges for unpublished)
+router.get('/', optionalAuth, async (req, res) => {
   try {
     const { level, difficulty, concept } = req.query;
     
-    let query = { isPublished: true };
+    // Check if user is admin
+    const isAdmin = req.user && req.user.isAdmin;
+    
+    // Admins see all lessons, others see only published
+    let query = isAdmin ? {} : { isPublished: true };
     
     if (level) query.level = parseInt(level);
     if (difficulty) query.difficulty = difficulty;
@@ -38,8 +43,8 @@ router.get('/', async (req, res) => {
 
 // @route   GET /api/lessons/:id
 // @desc    Get a specific lesson
-// @access  Public (but progress requires auth)
-router.get('/:id', async (req, res) => {
+// @access  Public (but progress requires auth, admins see all)
+router.get('/:id', optionalAuth, async (req, res) => {
   try {
     const lesson = await Lesson.findById(req.params.id)
       .populate('createdBy', 'username');
@@ -51,7 +56,8 @@ router.get('/:id', async (req, res) => {
     }
 
     // If lesson is not published and user is not admin, don't show it
-    if (!lesson.isPublished && (!req.user || !req.user.isAdmin)) {
+    const isAdmin = req.user && req.user.isAdmin;
+    if (!lesson.isPublished && !isAdmin) {
       return res.status(404).json({
         message: 'Lesson not found'
       });

@@ -26,18 +26,20 @@ A gamified code learning platform inspired by Apple's Swift Playgrounds. Learn p
 - **Pyodide** for Python code execution
 
 ### Backend
-- **Node.js** + **Express.js**
-- **MongoDB** with **Mongoose**
-- **JWT** authentication
+- **Spring Boot 3.2** with Java 17
+- **Spring Data JPA** with Hibernate
+- **H2 Database** (development) / **PostgreSQL** (production)
+- **JWT** authentication with Spring Security
 - **RESTful API** design
-- **CORS** + **Helmet** for security
+- **CORS** configuration
 
 ## 📦 Installation
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local or cloud instance)
-- npm or yarn
+- Node.js (v16 or higher) for frontend
+- Java 17 or higher for backend
+- Maven 3.6 or higher for backend
+- npm or yarn for frontend
 
 ### Setup
 
@@ -47,54 +49,37 @@ A gamified code learning platform inspired by Apple's Swift Playgrounds. Learn p
    cd gamestack
    ```
 
-2. **Install dependencies**
+2. **Install frontend dependencies**
    ```bash
-   npm run install:all
+   cd frontend
+   npm install
    ```
 
-3. **Set up environment variables**
+3. **Install and run backend**
    ```bash
-   cd backend
-   cp config.env.example config.env
+   cd backend-spring
+   mvn clean install
+   mvn spring-boot:run
    ```
    
-   Create and edit `backend/config.env` with your configuration (do not commit real secrets):
-   ```env
-   PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/gamestack
-   JWT_SECRET=change_me
-   NODE_ENV=development
-   ```
+   The Spring Boot backend will:
+   - Start on http://localhost:3001
+   - Create H2 in-memory database
+   - Seed with sample data automatically
 
-4. **Start MongoDB**
+4. **Start the frontend**
    ```bash
-   # If using local MongoDB
-   mongod
-   
-   # Or use MongoDB Atlas (cloud)
-   # Update MONGODB_URI in config.env
-   ```
-
-5. **Seed the database**
-   ```bash
-   cd backend
-   npm run seed
-   ```
-
-6. **Start the development servers**
-   ```bash
-   # From the root directory
+   cd frontend
    npm run dev
    ```
 
-   This will start:
-   - Backend server on http://localhost:5000
-   - Frontend development server on http://localhost:5173
+   The frontend will start on http://localhost:5173
 
 ## 🎮 Usage
 
 1. **Visit the application**: Open http://localhost:5173
 2. **Create an account** or use the demo account:
+   - Username: `demo`
    - Email: `demo@gamestack.dev`
    - Password: `demo123`
 3. **Start learning**: Choose a level and begin coding!
@@ -135,7 +120,7 @@ In the game environment, you have access to these Python functions:
 ### Project Structure
 ```
 gamestack/
-├── frontend/          # React frontend
+├── frontend/              # React frontend
 │   ├── src/
 │   │   ├── components/    # React components
 │   │   ├── pages/         # Page components
@@ -143,12 +128,14 @@ gamestack/
 │   │   ├── utils/         # Utility functions
 │   │   └── App.jsx        # Main app component
 │   └── package.json
-├── backend/           # Express backend
-│   ├── models/        # MongoDB models
-│   ├── routes/        # API routes
-│   ├── middleware/    # Express middleware
-│   ├── data/          # Sample data
-│   └── server.js      # Main server file
+├── backend-spring/        # Spring Boot backend
+│   ├── src/main/java/com/gamestack/
+│   │   ├── controller/    # REST controllers
+│   │   ├── entity/        # JPA entities
+│   │   ├── repository/    # JPA repositories
+│   │   ├── service/       # Business logic
+│   │   └── security/      # JWT & security config
+│   └── pom.xml
 └── README.md
 ```
 
@@ -177,13 +164,17 @@ gamestack/
 
 ### Adding New Lessons
 
-1. Create lesson data in `backend/data/sampleLessons.js`
-2. Include all required fields:
-   - `title`, `description`, `instructions`
-   - `worldState` (player position, gems, obstacles)
-   - `targetState` (completion conditions)
-   - `level`, `difficulty`, `concepts`
-3. Run `npm run seed` to update the database
+To add lessons, you can either:
+
+1. **Use the H2 Console** at http://localhost:3001/h2-console (JDBC URL: `jdbc:h2:mem:gamestack`)
+2. **Create via API**: POST to `/api/lessons` with admin credentials
+3. **Update DataSeeder.java**: Add lessons to the `seedLessons()` method in `backend-spring/src/main/java/com/gamestack/config/DataSeeder.java`
+
+Required fields:
+- `title`, `description`, `instructions`
+- `worldState` (player position, gems, obstacles)
+- `targetState` (completion conditions)
+- `level`, `difficulty`, `concepts`
 
 ## 🚀 Deployment
 
@@ -196,18 +187,24 @@ gamestack/
 2. Deploy the `dist` folder to your hosting service
 3. Update API base URL in production
 
-### Backend (Heroku/Railway)
-1. Set environment variables in your hosting platform
-2. Ensure MongoDB connection string is correct
-3. Deploy the backend directory
+### Backend (Railway/Render/Fly.io)
+1. Set up PostgreSQL database
+2. Update `application.yml` with production database connection
+3. Set environment variables for JWT secret
+4. Deploy using Maven wrapper or Docker
 
 ### Environment Variables
-```env
-# Production (example placeholders; set in your hosting provider's env vars)
-NODE_ENV=production
-MONGODB_URI=${MONGODB_URI}
-JWT_SECRET=${JWT_SECRET}
-PORT=5000
+```yaml
+# Production configuration in application.yml
+spring:
+  datasource:
+    url: jdbc:postgresql://your-postgres-url/gamestack
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration: 604800000
 ```
 
 ## 🤝 Contributing

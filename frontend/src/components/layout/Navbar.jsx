@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Menu, X, User, LogOut, Gamepad2 } from 'lucide-react'
+import { Menu, X, User, LogOut, Gamepad2, BarChart3 } from 'lucide-react'
 import useAuthStore from '../../store/authStore'
 
 const Navbar = () => {
@@ -62,6 +62,15 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <>
+                {user?.isAdmin && (
+                  <Link
+                    to="/admin/data"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-purple-300 hover:text-purple-200 hover:bg-purple-900/30 transition-colors"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    <span>Admin Data</span>
+                  </Link>
+                )}
                 <Link
                   to="/profile"
                   className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors"
@@ -131,6 +140,16 @@ const Navbar = () => {
               
               {isAuthenticated ? (
                 <>
+                  {user?.isAdmin && (
+                    <Link
+                      to="/admin/data"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-purple-300 hover:text-purple-200 hover:bg-purple-900/30 transition-colors"
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      <span>Admin Data</span>
+                    </Link>
+                  )}
                   <Link
                     to="/profile"
                     onClick={() => setIsMenuOpen(false)}
@@ -174,4 +193,9 @@ const Navbar = () => {
 }
 
 export default Navbar
+
+
+
+
+
 

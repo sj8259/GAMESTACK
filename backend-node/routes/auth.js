@@ -74,7 +74,8 @@ router.post('/register', [
         id: user._id,
         username: user.username,
         email: user.email,
-        progress: user.progress
+        progress: user.progress,
+        isAdmin: user.isAdmin || false
       }
     });
   } catch (error) {
@@ -136,7 +137,8 @@ router.post('/login', [
         username: user.username,
         email: user.email,
         progress: user.progress,
-        achievements: user.achievements
+        achievements: user.achievements,
+        isAdmin: user.isAdmin || false
       }
     });
   } catch (error) {

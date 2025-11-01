@@ -16,6 +16,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import AdminDataPage from './pages/AdminDataPage'
 
 function App() {
   const initializeAuth = useAuthStore(state => state.initializeAuth)
@@ -53,6 +54,11 @@ function App() {
           <Route path="/profile" element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/data" element={
+            <ProtectedRoute>
+              <AdminDataPage />
             </ProtectedRoute>
           } />
         </Routes>

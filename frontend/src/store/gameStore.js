@@ -6,6 +6,7 @@ const useGameStore = create((set, get) => ({
   isRunning: false,
   isCompleted: false,
   error: null,
+  obstacleHit: false,
   playerState: {
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },
@@ -28,22 +29,27 @@ const useGameStore = create((set, get) => ({
   
   // Game actions
   setCurrentLesson: (lesson) => {
+    // Deep clone the entire lesson to avoid reference issues
+    const clonedLesson = lesson ? JSON.parse(JSON.stringify(lesson)) : null
+    const clonedWorldState = clonedLesson?.worldState || {
+          gems: [],
+          obstacles: [],
+          player: { position: { x: 0, y: 0, z: 0 }, rotation: { x: 0, y: 0, z: 0 } }
+        }
+    
     set({
-      currentLesson: lesson,
-      worldState: lesson?.worldState || {
-        gems: [],
-        obstacles: [],
-        player: { position: { x: 0, y: 0, z: 0 }, rotation: { x: 0, y: 0, z: 0 } }
-      },
+      currentLesson: clonedLesson,
+      worldState: clonedWorldState,
       playerState: {
-        position: lesson?.worldState?.player?.position || { x: 0, y: 0, z: 0 },
-        rotation: lesson?.worldState?.player?.rotation || { x: 0, y: 0, z: 0 },
+        position: clonedWorldState.player?.position || { x: 0, y: 0, z: 0 },
+        rotation: clonedWorldState.player?.rotation || { x: 0, y: 0, z: 0 },
         gemsCollected: 0,
         moves: 0
       },
-      code: lesson?.startingCode || '# Write your code here\n# Available functions: move(), turnLeft(), turnRight(), pickGem()\n\n',
+      code: clonedLesson?.startingCode || '# Write your code here\n# Available functions: move(), turnLeft(), turnRight(), pickGem()\n\n',
       isCompleted: false,
       error: null,
+      obstacleHit: false,
       executionHistory: []
     })
   },
@@ -88,21 +94,21 @@ const useGameStore = create((set, get) => ({
 
   resetGame: () => {
     const { currentLesson } = get()
-    if (currentLesson) {
+    if (currentLesson && currentLesson.worldState) {
+      // Deep clone worldState to avoid reference issues
+      const clonedWorldState = JSON.parse(JSON.stringify(currentLesson.worldState))
+      
       set({
         playerState: {
-          position: currentLesson.worldState?.player?.position || { x: 0, y: 0, z: 0 },
-          rotation: currentLesson.worldState?.player?.rotation || { x: 0, y: 0, z: 0 },
+          position: clonedWorldState.player?.position || { x: 0, y: 0, z: 0 },
+          rotation: clonedWorldState.player?.rotation || { x: 0, y: 0, z: 0 },
           gemsCollected: 0,
           moves: 0
         },
-        worldState: currentLesson.worldState || {
-          gems: [],
-          obstacles: [],
-          player: { position: { x: 0, y: 0, z: 0 }, rotation: { x: 0, y: 0, z: 0 } }
-        },
+        worldState: clonedWorldState,
         isCompleted: false,
         error: null,
+        obstacleHit: false,
         isRunning: false,
         executionHistory: [],
         actionQueue: [],
@@ -147,6 +153,8 @@ const useGameStore = create((set, get) => ({
     )
     
     if (hasCollision) {
+      // Hit an obstacle - set flag and stop execution
+      set({ obstacleHit: true, isRunning: false, error: 'Obstacle hit! Start again.' })
       return false // Movement blocked
     }
     
@@ -203,7 +211,10 @@ const useGameStore = create((set, get) => ({
       Math.abs(obstacle.position.x - newPosition.x) < 0.5 &&
       Math.abs(obstacle.position.z - newPosition.z) < 0.5
     )
-    if (hasCollision) return false
+    if (hasCollision) {
+      set({ obstacleHit: true, isRunning: false, error: 'Obstacle hit! Start again.' })
+      return false
+    }
 
     set(state => ({
       playerState: {

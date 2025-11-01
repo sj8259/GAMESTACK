@@ -63,6 +63,9 @@ const LevelSelectPage = () => {
   }
 
   const isLessonUnlocked = (lesson) => {
+    // Admins have access to all lessons
+    if (user?.isAdmin) return true
+    
     // First lesson is always unlocked
     if (lesson.level === 1) return true
     
@@ -303,4 +306,9 @@ const LevelSelectPage = () => {
 }
 
 export default LevelSelectPage
+
+
+
+
+
 
