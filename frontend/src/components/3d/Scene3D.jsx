@@ -1,43 +1,20 @@
-import { useRef } from 'react'
+import { useRef, Suspense } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Environment, Float, Sparkles, Stars, Trail } from '@react-three/drei'
+import { OrbitControls, Environment, Float, Sparkles, Stars, Trail, useGLTF } from '@react-three/drei'
 import { useMemo } from 'react'
 import * as THREE from 'three'
+import PlayerCharacter from './PlayerCharacter'
 
-// Player component
+// Simple Player component - Using Baby Yoda model or fallback
 function Player({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
-  const meshRef = useRef()
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.1
-    }
-  })
-
   return (
-    <group position={position} rotation={rotation}>
-      {/* Player body */}
-      <mesh ref={meshRef} position={[0, 0.5, 0]}>
-        <boxGeometry args={[0.8, 1, 0.4]} />
-        <meshStandardMaterial color="#3b82f6" />
-      </mesh>
-      
-      {/* Player head */}
-      <mesh position={[0, 1.2, 0]}>
-        <boxGeometry args={[0.6, 0.6, 0.4]} />
-        <meshStandardMaterial color="#60a5fa" />
-      </mesh>
-      
-      {/* Eyes */}
-      <mesh position={[-0.15, 1.3, 0.25]}>
-        <sphereGeometry args={[0.05]} />
-        <meshStandardMaterial color="#1f2937" />
-      </mesh>
-      <mesh position={[0.15, 1.3, 0.25]}>
-        <sphereGeometry args={[0.05]} />
-        <meshStandardMaterial color="#1f2937" />
-      </mesh>
-    </group>
+    <PlayerCharacter
+      position={[position[0], position[1], position[2]]}
+      rotation={rotation}
+      isCompleted={false}
+      useModel={true} // Enable GLTF model loading
+      modelPath="/models/baby_yoda_free_3d_by_oscar_creativo/scene.gltf" // Baby Yoda model path
+    />
   )
 }
 
@@ -61,17 +38,29 @@ function Gem({ position = [0, 0.5, 0], collected = false }) {
         <meshStandardMaterial 
           color="#fbbf24" 
           emissive="#f59e0b"
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.6}
         />
       </mesh>
       
       {/* Gem glow */}
-      <mesh position={[0, 0, 0]} scale={[1.2, 1.2, 1.2]}>
+      <mesh position={[0, 0, 0]} scale={[1.3, 1.3, 1.3]}>
         <octahedronGeometry args={[0.3]} />
         <meshStandardMaterial 
           color="#fbbf24" 
           transparent
-          opacity={0.2}
+          opacity={0.3}
+        />
+      </mesh>
+      
+      {/* Outer glow ring */}
+      <mesh position={[0, 0.5, 0]} scale={[2, 1, 2]}>
+        <torusGeometry args={[0.2, 0.05, 8, 16]} />
+        <meshStandardMaterial 
+          color="#f59e0b" 
+          transparent
+          opacity={0.4}
+          emissive="#fbbf24"
+          emissiveIntensity={0.3}
         />
       </mesh>
     </group>
@@ -80,29 +69,62 @@ function Gem({ position = [0, 0.5, 0], collected = false }) {
 
 // Obstacle component
 function Obstacle({ position = [0, 0.5, 0], type = 'wall' }) {
+  const meshRef = useRef()
+
+  useFrame((state) => {
+    if (meshRef.current && type === 'spike') {
+      meshRef.current.rotation.y = state.clock.elapsedTime * 2
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 3) * 0.05
+    }
+  })
+
   const getColor = () => {
     switch (type) {
-      case 'wall': return '#6b7280'
-      case 'pit': return '#374151'
+      case 'wall': return '#9ca3af'
+      case 'pit': return '#4b5563'
+      case 'spike': return '#ef4444'
+      default: return '#9ca3af'
+    }
+  }
+
+  const getEmissive = () => {
+    switch (type) {
       case 'spike': return '#dc2626'
-      default: return '#6b7280'
+      case 'wall': return '#6b7280'
+      default: return undefined
     }
   }
 
   const getGeometry = () => {
     switch (type) {
       case 'spike':
-        return <coneGeometry args={[0.4, 1, 8]} />
+        return <coneGeometry args={[0.45, 1.2, 8]} />
       default:
         return <boxGeometry args={[1, 1, 1]} />
     }
   }
 
   return (
-    <mesh position={position}>
-      {getGeometry()}
-      <meshStandardMaterial color={getColor()} />
-    </mesh>
+    <group position={position}>
+      <mesh ref={meshRef}>
+        {getGeometry()}
+        <meshStandardMaterial 
+          color={getColor()} 
+          emissive={getEmissive()}
+          emissiveIntensity={type === 'spike' ? 0.3 : 0.1}
+        />
+      </mesh>
+      {type === 'wall' && (
+        <mesh position={[0, -0.5, 0]}>
+          <boxGeometry args={[1.1, 0.15, 1.1]} />
+          <meshStandardMaterial 
+            color="#4b5563"
+            transparent
+            opacity={0.6}
+          />
+        </mesh>
+      )}
+    </group>
   )
 }
 
@@ -112,9 +134,11 @@ function Ground() {
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
       <planeGeometry args={[20, 20]} />
       <meshStandardMaterial 
-        color="#1e293b" 
+        color="#0f172a" 
         transparent
-        opacity={0.8}
+        opacity={0.9}
+        roughness={0.8}
+        metalness={0.1}
       />
     </mesh>
   )
@@ -129,33 +153,34 @@ function Grid() {
 
 // Main scene component
 function SceneContent() {
-  // Demo world state for the preview
+  // Demo world state for the preview - Simplified clean layout
   const demoWorld = {
-    player: { position: [0, 0, 0], rotation: [0, 0, 0] },
+    player: { position: [0, 0, 0], rotation: [0, 45, 0] },
     gems: [
-      { position: [2, 0.5, 2], collected: false },
-      { position: [-2, 0.5, -1], collected: false },
-      { position: [1, 0.5, -3], collected: false },
+      { position: [2, 0.5, 0], collected: false },
+      { position: [0, 0.5, 2], collected: false },
+      { position: [-2, 0.5, 0], collected: false },
     ],
     obstacles: [
-      { position: [1, 0.5, 0], type: 'wall' },
-      { position: [-1, 0.5, 2], type: 'spike' },
-      { position: [0, 0.5, -2], type: 'wall' },
+      { position: [1, 0.5, 1], type: 'wall' },
+      { position: [-1, 0.5, -1], type: 'wall' },
     ]
   }
 
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.4} />
+      {/* Lighting - Enhanced for hero section */}
+      <ambientLight intensity={0.8} />
       <directionalLight 
         position={[10, 10, 5]} 
-        intensity={1} 
+        intensity={1.5} 
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
-      <pointLight position={[0, 5, 0]} intensity={0.5} color="#3b82f6" />
+      <pointLight position={[0, 5, 0]} intensity={1.0} color="#3b82f6" />
+      <pointLight position={[-5, 3, 5]} intensity={0.6} color="#8b5cf6" />
+      <pointLight position={[5, 3, -5]} intensity={0.5} color="#06b6d4" />
 
       {/* Environment */}
       <Environment preset="night" />
@@ -203,21 +228,24 @@ const Scene3D = ({ fullscreen = false }) => {
     <div className={fullscreen ? 'w-full h-full' : 'w-full h-full rounded-2xl overflow-hidden bg-slate-900'}>
       <Canvas
         camera={{ 
-          position: [8, 6, 8], 
+          position: [8, 7, 8], 
           fov: 60 
         }}
         shadows
         className={fullscreen ? 'w-full h-full' : 'rounded-2xl'}
+        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
       >
         <SceneContent />
         <OrbitControls 
           enablePan={false}
-          enableZoom={true}
+          enableZoom={false}
           enableRotate={true}
-          minDistance={5}
-          maxDistance={15}
-          minPolarAngle={Math.PI / 6}
-          maxPolarAngle={Math.PI / 2}
+          autoRotate={true}
+          autoRotateSpeed={0.5}
+          minDistance={8}
+          maxDistance={12}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 2.2}
         />
       </Canvas>
     </div>

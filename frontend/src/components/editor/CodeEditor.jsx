@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
-import { Play, RotateCcw, HelpCircle, CheckCircle, XCircle } from 'lucide-react'
+import { Play, RotateCcw, HelpCircle, CheckCircle, XCircle, Square } from 'lucide-react'
 import useGameStore from '../../store/gameStore'
 
-const CodeEditor = ({ onCodeChange, onRunCode, isRunning, error, isCompleted }) => {
+const CodeEditor = ({ onCodeChange, onRunCode, onStopCode, isRunning, error, isCompleted }) => {
   const editorRef = useRef(null)
   const [editorValue, setEditorValue] = useState('')
   const { code, setCode } = useGameStore()
@@ -274,14 +274,23 @@ const CodeEditor = ({ onCodeChange, onRunCode, isRunning, error, isCompleted }) 
             <span>Reset</span>
           </button>
           
-          <button
-            onClick={handleRunCode}
-            disabled={isRunning}
-            className="flex items-center space-x-2 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Play className="w-4 h-4" />
-            <span>{isRunning ? 'Running...' : 'Run Code'}</span>
-          </button>
+          {isRunning ? (
+            <button
+              onClick={onStopCode}
+              className="flex items-center space-x-2 px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+            >
+              <Square className="w-4 h-4" />
+              <span>Stop</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleRunCode}
+              className="flex items-center space-x-2 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+            >
+              <Play className="w-4 h-4" />
+              <span>Run Code</span>
+            </button>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Code, Gamepad2, Trophy, Users, Zap } from 'lucide-react'
-import HeroMedia from '../components/HeroMedia'
+import { Code, Gamepad2, Trophy, Users, Zap } from 'lucide-react'
+import AuroraHero from '../components/AuroraHero'
 
 const HomePage = () => {
   const features = [
@@ -35,43 +35,8 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 lg:py-36">
-        {/* Full-bleed animated background */}
-        <HeroMedia background />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center">
-            {/* Content over scene */}
-            <div className="text-center lg:text-left relative z-10">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                <span className="text-gradient">Learn to Code</span>
-                <br />
-                Through 3D Adventures
-              </h1>
-              <p className="text-xl text-slate-300 mb-8 max-w-2xl">
-                Master programming concepts by controlling a 3D character in virtual worlds. 
-                Write Python code, solve puzzles, and unlock new levels as you progress.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link to="/levels" className="btn-primary text-lg px-8 py-4 group">
-                  Start Learning
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link to="/leaderboard" className="btn-secondary text-lg px-8 py-4">
-                  View Leaderboard
-                </Link>
-              </div>
-            </div>
-
-            {/* Removed the foreground media card to let the scene be the background */}
-          </div>
-        </div>
-
-        {/* Background Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/10 rounded-full blur-xl animate-float"></div>
-        <div className="absolute top-40 right-20 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-20 left-20 w-24 h-24 bg-pink-500/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }}></div>
-      </section>
+      {/* Hero Section with Aurora Animation */}
+      <AuroraHero />
 
       {/* Features Section */}
       <section className="py-20 bg-slate-800/30">

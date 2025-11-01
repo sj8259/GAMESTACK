@@ -2,64 +2,18 @@ import { useRef, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Environment } from '@react-three/drei'
 import * as THREE from 'three'
+import PlayerCharacter from './PlayerCharacter'
 
-// Player component
+// Simple Player component - Using Baby Yoda model or fallback
 function Player({ position = [0, 0, 0], rotation = [0, 0, 0], isCompleted = false }) {
-  const meshRef = useRef()
-  const groupRef = useRef()
-
-  useFrame((state) => {
-    if (meshRef.current && !isCompleted) {
-      // Subtle idle animation: gentle breathing on the body mesh
-      const baseY = 0.5
-      meshRef.current.position.y = baseY + Math.sin(state.clock.elapsedTime * 2) * 0.02
-    }
-  })
-
   return (
-    <group ref={groupRef} position={position} rotation={rotation}>
-      {/* Player body */}
-      <mesh ref={meshRef} position={[0, 0.5, 0]}>
-        <boxGeometry args={[0.8, 1, 0.4]} />
-        <meshStandardMaterial 
-          color={isCompleted ? "#10b981" : "#3b82f6"} 
-          emissive={isCompleted ? "#059669" : "#1d4ed8"}
-          emissiveIntensity={0.2}
-        />
-      </mesh>
-      
-      {/* Player head */}
-      <mesh position={[0, 1.2, 0]}>
-        <boxGeometry args={[0.6, 0.6, 0.4]} />
-        <meshStandardMaterial 
-          color={isCompleted ? "#34d399" : "#60a5fa"}
-          emissive={isCompleted ? "#10b981" : "#2563eb"}
-          emissiveIntensity={0.1}
-        />
-      </mesh>
-      
-      {/* Eyes */}
-      <mesh position={[-0.15, 1.3, 0.25]}>
-        <sphereGeometry args={[0.05]} />
-        <meshStandardMaterial color="#1f2937" />
-      </mesh>
-      <mesh position={[0.15, 1.3, 0.25]}>
-        <sphereGeometry args={[0.05]} />
-        <meshStandardMaterial color="#1f2937" />
-      </mesh>
-
-      {/* Success glow effect */}
-      {isCompleted && (
-        <mesh position={[0, 0.5, 0]} scale={[2, 2, 2]}>
-          <sphereGeometry args={[0.5]} />
-          <meshStandardMaterial 
-            color="#10b981" 
-            transparent
-            opacity={0.1}
-          />
-        </mesh>
-      )}
-    </group>
+    <PlayerCharacter
+      position={position}
+      rotation={rotation}
+      isCompleted={isCompleted}
+      useModel={true} // Enable GLTF model loading
+      modelPath="/models/baby_yoda_free_3d_by_oscar_creativo/scene.gltf" // Baby Yoda model path
+    />
   )
 }
 
@@ -141,14 +95,29 @@ function Obstacle({ position = [0, 0.5, 0], type = 'wall' }) {
   }
 
   return (
-    <mesh ref={meshRef} position={position}>
-      {getGeometry()}
-      <meshStandardMaterial 
-        color={getColor()} 
-        emissive={type === 'spike' ? '#991b1b' : undefined}
-        emissiveIntensity={type === 'spike' ? 0.1 : undefined}
-      />
-    </mesh>
+    <group position={position}>
+      <mesh ref={meshRef}>
+        {getGeometry()}
+        <meshStandardMaterial 
+          color={getColor()} 
+          emissive={type === 'spike' ? '#991b1b' : '#374151'}
+          emissiveIntensity={type === 'spike' ? 0.2 : 0.1}
+          roughness={0.7}
+          metalness={0.1}
+        />
+      </mesh>
+      {/* Add a subtle glow/shadow effect for walls */}
+      {type === 'wall' && (
+        <mesh position={[0, -0.5, 0]}>
+          <boxGeometry args={[1.1, 0.1, 1.1]} />
+          <meshStandardMaterial 
+            color="#1f2937"
+            transparent
+            opacity={0.5}
+          />
+        </mesh>
+      )}
+    </group>
   )
 }
 

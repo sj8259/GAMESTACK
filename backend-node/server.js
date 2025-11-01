@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
+const multer = require('multer');
 
 // Load environment variables
 dotenv.config({ path: './config.env' });
@@ -19,6 +20,10 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded files statically
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/gamestack')
@@ -37,17 +42,26 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Error handling middleware
+// Error handling middleware - must come before 404 handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err.stack);
+  // Handle multer errors
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({
+      message: 'File upload error',
+      error: err.message
+    });
+  }
+  // Handle other errors
   res.status(500).json({ 
     message: 'Something went wrong!', 
     error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error' 
   });
 });
 
-// 404 handler
+// 404 handler - must come last, after all routes
 app.use('*', (req, res) => {
+  console.log(`404 - Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({ message: 'Route not found' });
 });
 

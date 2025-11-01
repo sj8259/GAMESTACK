@@ -125,6 +125,15 @@ const useAuthStore = create(
         }))
       },
 
+      updateUser: (userData) => {
+        set(state => ({
+          user: {
+            ...state.user,
+            ...userData
+          }
+        }))
+      },
+
       clearError: () => set({ error: null }),
 
       // Initialize auth state from localStorage

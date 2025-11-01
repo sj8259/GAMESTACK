@@ -9,7 +9,7 @@ const api = axios.create({
   },
 })
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and handle FormData
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('gamestack-auth')
@@ -23,6 +23,12 @@ api.interceptors.request.use(
         console.error('Error parsing auth token:', error)
       }
     }
+    
+    // If data is FormData, remove Content-Type header to let axios set it with boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type']
+    }
+    
     return config
   },
   (error) => {

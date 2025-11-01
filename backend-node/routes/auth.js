@@ -75,6 +75,8 @@ router.post('/register', [
         username: user.username,
         email: user.email,
         progress: user.progress,
+        avatar: user.avatar || 'yoda',
+        customAvatar: user.customAvatar || null,
         isAdmin: user.isAdmin || false
       }
     });
@@ -138,6 +140,8 @@ router.post('/login', [
         email: user.email,
         progress: user.progress,
         achievements: user.achievements,
+        avatar: user.avatar || 'yoda',
+        customAvatar: user.customAvatar || null,
         isAdmin: user.isAdmin || false
       }
     });
@@ -171,7 +175,8 @@ router.get('/me', auth, async (req, res) => {
         email: user.email,
         progress: user.progress,
         achievements: user.achievements,
-        avatar: user.avatar,
+        avatar: user.avatar || 'yoda',
+        customAvatar: user.customAvatar || null,
         isAdmin: user.isAdmin
       }
     });
@@ -198,6 +203,12 @@ router.put('/profile', [
     .optional()
     .isString()
     .withMessage('Avatar must be a string')
+    .isIn([
+      'yoda', 'luke', 'leia', 'vader', 'r2d2', 'c3po', 'bb8', 'boba', 'stormtrooper',
+      'han', 'chewbacca', 'obiwan', 'anakin', 'padme', 'mace',
+      'rey', 'finn', 'poe', 'kylo', 'ahsoka', 'maul', 'grievous', 'jabba', 'custom'
+    ])
+    .withMessage('Avatar must be a valid Star Wars character ID or "custom"')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -240,7 +251,8 @@ router.put('/profile', [
         id: user._id,
         username: user.username,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar || 'yoda',
+        customAvatar: user.customAvatar || null
       }
     });
   } catch (error) {

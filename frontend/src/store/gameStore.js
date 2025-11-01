@@ -26,6 +26,9 @@ const useGameStore = create((set, get) => ({
   actionQueue: [],
   isQueueRunning: false,
   stepDelayMs: 140,
+  executionCancelled: false,
+  maxMoves: 500, // Maximum moves before auto-stopping
+  worldBounds: { minX: -10, maxX: 10, minZ: -10, maxZ: 10 }, // World boundaries
   
   // Game actions
   setCurrentLesson: (lesson) => {
@@ -71,11 +74,11 @@ const useGameStore = create((set, get) => ({
   },
 
   startExecution: () => {
-    set({ isRunning: true, error: null })
+    set({ isRunning: true, error: null, executionCancelled: false })
   },
 
   stopExecution: () => {
-    set({ isRunning: false })
+    set({ isRunning: false, executionCancelled: true, actionQueue: [], isQueueRunning: false })
   },
 
   addExecutionStep: (step) => {
@@ -110,6 +113,7 @@ const useGameStore = create((set, get) => ({
         error: null,
         obstacleHit: false,
         isRunning: false,
+        executionCancelled: false,
         executionHistory: [],
         actionQueue: [],
         isQueueRunning: false
@@ -126,6 +130,11 @@ const useGameStore = create((set, get) => ({
     if (!actionQueue.length) return
     set({ isQueueRunning: true })
     for (const fn of actionQueue) {
+      // Check if execution was cancelled
+      if (get().executionCancelled) {
+        set({ actionQueue: [], isQueueRunning: false })
+        return
+      }
       try { await fn() } catch {}
       await new Promise(r => setTimeout(r, stepDelayMs))
     }
@@ -135,6 +144,18 @@ const useGameStore = create((set, get) => ({
   // Player movement functions (to be called by code execution)
   move: async () => {
     const state = get()
+    
+    // Check if execution was cancelled
+    if (state.executionCancelled) {
+      return false
+    }
+    
+    // Check move limit
+    if (state.playerState.moves >= state.maxMoves) {
+      set({ isRunning: false, error: `Maximum moves (${state.maxMoves}) reached. Stop the execution.` })
+      return false
+    }
+    
     const { playerState } = state
     const currentRotation = playerState.rotation.y
     
@@ -144,6 +165,14 @@ const useGameStore = create((set, get) => ({
       x: playerState.position.x + Math.sin(radians),
       y: playerState.position.y,
       z: playerState.position.z + Math.cos(radians)
+    }
+    
+    // Check world boundaries
+    const bounds = state.worldBounds
+    if (newPosition.x < bounds.minX || newPosition.x > bounds.maxX ||
+        newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
+      set({ isRunning: false, error: 'Out of bounds! Character cannot move outside the world boundaries.' })
+      return false
     }
     
     // Check for collisions with obstacles
@@ -198,6 +227,18 @@ const useGameStore = create((set, get) => ({
   // Move one step backward relative to current facing
   moveBackward: async () => {
     const state = get()
+    
+    // Check if execution was cancelled
+    if (state.executionCancelled) {
+      return false
+    }
+    
+    // Check move limit
+    if (state.playerState.moves >= state.maxMoves) {
+      set({ isRunning: false, error: `Maximum moves (${state.maxMoves}) reached. Stop the execution.` })
+      return false
+    }
+    
     const { playerState } = state
     const currentRotation = playerState.rotation.y
     const radians = (currentRotation * Math.PI) / 180
@@ -205,6 +246,14 @@ const useGameStore = create((set, get) => ({
       x: playerState.position.x - Math.sin(radians),
       y: playerState.position.y,
       z: playerState.position.z - Math.cos(radians)
+    }
+
+    // Check world boundaries
+    const bounds = state.worldBounds
+    if (newPosition.x < bounds.minX || newPosition.x > bounds.maxX ||
+        newPosition.z < bounds.minZ || newPosition.z > bounds.maxZ) {
+      set({ isRunning: false, error: 'Out of bounds! Character cannot move outside the world boundaries.' })
+      return false
     }
 
     const hasCollision = state.worldState.obstacles.some(obstacle => 

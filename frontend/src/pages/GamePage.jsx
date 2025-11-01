@@ -26,8 +26,10 @@ const GamePage = () => {
     resetGame,
     enqueueAction,
     runQueue,
+    stopExecution,
     error: gameStoreError,
-    obstacleHit
+    obstacleHit,
+    isRunning
   } = useGameStore()
 
 
@@ -96,18 +98,62 @@ const GamePage = () => {
     resetGame()
     setIsExecuting(true)
     setExecutionError(null)
+    
+    let executionTimeout = null
+    let pythonExecutionPromise = null
 
     try {
       // Create game functions object
       const gameFunctions = {
-        move: () => enqueueAction(() => useGameStore.getState().move()),
-        moveBackward: () => enqueueAction(() => useGameStore.getState().moveBackward()),
-        turnLeft: () => enqueueAction(() => useGameStore.getState().turnLeft()),
-        turnRight: () => enqueueAction(() => useGameStore.getState().turnRight()),
-        turnAround: () => enqueueAction(() => useGameStore.getState().turnAround()),
-        face: (dir) => enqueueAction(() => useGameStore.getState().face(dir)),
-        moveSteps: (n) => enqueueAction(() => useGameStore.getState().moveSteps(n)),
-        pickGem: () => enqueueAction(() => useGameStore.getState().pickGem()),
+        move: () => {
+          // Check if execution was cancelled
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().move())
+        },
+        moveBackward: () => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().moveBackward())
+        },
+        turnLeft: () => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().turnLeft())
+        },
+        turnRight: () => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().turnRight())
+        },
+        turnAround: () => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().turnAround())
+        },
+        face: (dir) => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().face(dir))
+        },
+        moveSteps: (n) => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().moveSteps(n))
+        },
+        pickGem: () => {
+          if (useGameStore.getState().executionCancelled) {
+            throw new Error('Execution cancelled')
+          }
+          return enqueueAction(() => useGameStore.getState().pickGem())
+        },
         getPosition: () => {
           const state = useGameStore.getState()
           const pos = state.playerState?.position || { x: 0, z: 0 }
@@ -117,9 +163,27 @@ const GamePage = () => {
         getDirection: () => useGameStore.getState().getDirection()
       }
 
-      // Execute the Python code
-      const result = await executePythonCode(code, gameFunctions)
-      await runQueue()
+      // Execute the Python code with timeout
+      pythonExecutionPromise = executePythonCode(code, gameFunctions)
+      const result = await Promise.race([
+        pythonExecutionPromise,
+        new Promise((_, reject) => {
+          executionTimeout = setTimeout(() => {
+            stopExecution()
+            reject(new Error('Execution timeout'))
+          }, 30000)
+        })
+      ])
+
+      // Clear timeout if execution completed
+      if (executionTimeout) {
+        clearTimeout(executionTimeout)
+      }
+
+      // Only run queue if not cancelled
+      if (!useGameStore.getState().executionCancelled) {
+        await runQueue()
+      }
 
       if (!result.success) {
         setExecutionError(result.error)
@@ -129,12 +193,32 @@ const GamePage = () => {
       if (gameStoreError && gameStoreError.includes('Obstacle hit')) {
         setExecutionError(gameStoreError)
       }
+      
+      // Check for out of bounds or max moves
+      if (gameStoreError && (gameStoreError.includes('Out of bounds') || gameStoreError.includes('Maximum moves'))) {
+        setExecutionError(gameStoreError)
+      }
     } catch (error) {
       console.error('Code execution error:', error)
-      setExecutionError(error.message || 'Code execution failed')
+      if (error.message === 'Execution cancelled') {
+        setExecutionError('Execution stopped by user.')
+      } else if (error.message === 'Execution timeout') {
+        setExecutionError('Execution timeout! Your code ran for too long. Check for infinite loops.')
+      } else {
+        setExecutionError(error.message || 'Code execution failed')
+      }
     } finally {
+      if (executionTimeout) {
+        clearTimeout(executionTimeout)
+      }
       setIsExecuting(false)
     }
+  }
+
+  const handleStopExecution = () => {
+    stopExecution()
+    setIsExecuting(false)
+    setExecutionError('Execution stopped by user.')
   }
 
   const handleReset = () => {
@@ -285,6 +369,7 @@ const GamePage = () => {
           <div className="flex-1 min-h-0 border-t border-slate-700/50">
             <CodeEditor
               onRunCode={handleRunCode}
+              onStopCode={handleStopExecution}
               isRunning={isExecuting}
               error={executionError || gameStoreError}
               isCompleted={isCompleted}

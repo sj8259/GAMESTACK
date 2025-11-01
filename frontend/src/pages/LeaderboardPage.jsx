@@ -69,8 +69,84 @@ const LeaderboardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black py-8 relative overflow-hidden">
+      {/* Dark Veil Background with Enhanced Gradients - inspired by reactbits.dev */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Dark base layer */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-slate-900"></div>
+        
+        {/* Enhanced gradient mesh with dark colors */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(ellipse 800px 600px at 0% 0%, rgba(59, 130, 246, 0.25) 0%, transparent 60%),
+              radial-gradient(ellipse 800px 600px at 100% 0%, rgba(139, 92, 246, 0.25) 0%, transparent 60%),
+              radial-gradient(ellipse 800px 600px at 100% 100%, rgba(236, 72, 153, 0.2) 0%, transparent 60%),
+              radial-gradient(ellipse 800px 600px at 0% 100%, rgba(59, 130, 246, 0.25) 0%, transparent 60%),
+              radial-gradient(ellipse 1200px 1200px at 50% 50%, rgba(15, 23, 42, 0.9) 0%, transparent 70%)
+            `,
+            backgroundSize: '100% 100%'
+          }}
+        />
+        
+        {/* Animated flowing veil layers with vibrant gradients */}
+        <div 
+          className="absolute inset-0 opacity-70"
+          style={{
+            background: `
+              radial-gradient(ellipse 1000px 800px at top left, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+              radial-gradient(ellipse 1000px 800px at top right, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+              radial-gradient(ellipse 1000px 800px at bottom left, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+              radial-gradient(ellipse 1000px 800px at bottom right, rgba(59, 130, 246, 0.25) 0%, transparent 50%)
+            `,
+            backgroundSize: '200% 200%',
+            animation: 'veilMove 20s ease-in-out infinite'
+          }}
+        />
+        
+        {/* Enhanced conic gradients for veil effect */}
+        <div 
+          className="absolute inset-0 opacity-50"
+          style={{
+            background: `
+              conic-gradient(from 0deg at 30% 30%, transparent 0deg, rgba(59, 130, 246, 0.15) 90deg, rgba(139, 92, 246, 0.1) 180deg, transparent 270deg),
+              conic-gradient(from 180deg at 70% 70%, transparent 0deg, rgba(139, 92, 246, 0.15) 90deg, rgba(236, 72, 153, 0.1) 180deg, transparent 270deg),
+              conic-gradient(from 90deg at 50% 50%, transparent 0deg, rgba(59, 130, 246, 0.08) 120deg, transparent 240deg)
+            `,
+            backgroundSize: '100% 100%',
+            animation: 'veilRotate 25s linear infinite'
+          }}
+        />
+        
+        {/* Dark gradient overlays for depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30"></div>
+        
+        {/* Enhanced vibrant gradient orbs with darker contrast */}
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '15s' }}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '18s', animationDelay: '3s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-[700px] h-[700px] bg-pink-500/15 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse" style={{ animationDuration: '20s', animationDelay: '6s' }}></div>
+        <div className="absolute top-0 right-1/3 w-[400px] h-[400px] bg-indigo-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '22s', animationDelay: '1s' }}></div>
+        <div className="absolute bottom-0 left-1/3 w-[400px] h-[400px] bg-cyan-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '17s', animationDelay: '4s' }}></div>
+        
+        {/* Subtle mesh grid overlay */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+              linear-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(139, 92, 246, 0.08) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px, 50px 50px, 200px 200px, 200px 200px',
+            backgroundPosition: '0 0, 0 0, 25px 25px, 25px 25px'
+          }}
+        />
+      </div>
+      
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-6">

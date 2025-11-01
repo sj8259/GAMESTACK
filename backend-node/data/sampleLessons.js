@@ -21,7 +21,12 @@ const sampleLessons = [
       gems: [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 0, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 0 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: 1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 0 },
@@ -55,7 +60,11 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 2 }, collected: false }
       ],
       obstacles: [
-        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" }
+        { position: { x: 1, y: 0.5, z: 0 }, type: "wall" },
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 1, y: 0.5, z: 2 }, type: "wall" },
+        { position: { x: 0, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 1 }, type: "wall" }
       ]
     },
     targetState: {
@@ -90,7 +99,13 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 3, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 0, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 4, y: 0.5, z: 0 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 3, y: 0, z: 0 },
@@ -160,7 +175,10 @@ const sampleLessons = [
         { position: { x: 0, y: 0.5, z: 2 }, collected: false },
         { position: { x: 0, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: 1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 0, y: 0, z: 0 },
@@ -192,7 +210,10 @@ const sampleLessons = [
       gems: [
         { position: { x: 3, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: -1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 3, y: 0, z: 0 },
@@ -225,7 +246,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 4, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 3, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 5, y: 0.5, z: 0 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 4, y: 0, z: 0 },
@@ -259,7 +283,10 @@ const sampleLessons = [
         { position: { x: 1, y: 0.5, z: 1 }, collected: false },
         { position: { x: 2, y: 0.5, z: 1 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 0, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: 0 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 1 },
@@ -292,7 +319,10 @@ const sampleLessons = [
         { position: { x: 1, y: 0.5, z: 0 }, collected: false },
         { position: { x: 1, y: 0.5, z: 1 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 0, y: 0.5, z: 0 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: 1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 1, y: 0, z: 1 },
@@ -327,7 +357,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 1 }, collected: false },
         { position: { x: 1, y: 0.5, z: 1 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 0, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 2, y: 0.5, z: 2 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 1 },
@@ -360,7 +393,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 4, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 3, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 1, y: 0.5, z: -1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 4, y: 0, z: 0 },
@@ -393,7 +429,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 2, y: 0.5, z: 2 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 2 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 2 },
@@ -426,7 +465,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 2, y: 0.5, z: 1 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 0 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 1 },
@@ -461,7 +503,10 @@ const sampleLessons = [
         { position: { x: 0, y: 0.5, z: 1 }, collected: false },
         { position: { x: 0, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 2, y: 0.5, z: 0 }, type: "wall" },
+        { position: { x: 0, y: 0.5, z: 2 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 0, y: 0, z: 0 },
@@ -534,7 +579,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 3, y: 0.5, z: 0 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 2, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 0, y: 0.5, z: 1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 3, y: 0, z: 0 },
@@ -605,7 +653,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 2, y: 0.5, z: 1 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 0 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 1 },
@@ -638,7 +689,10 @@ const sampleLessons = [
         { position: { x: 2, y: 0.5, z: 0 }, collected: false },
         { position: { x: 2, y: 0.5, z: 2 }, collected: false }
       ],
-      obstacles: []
+      obstacles: [
+        { position: { x: 1, y: 0.5, z: 1 }, type: "wall" },
+        { position: { x: 3, y: 0.5, z: 1 }, type: "wall" }
+      ]
     },
     targetState: {
       playerPosition: { x: 2, y: 0, z: 2 },
