@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { Play, RotateCcw, HelpCircle, CheckCircle, XCircle, Square } from 'lucide-react'
 import useGameStore from '../../store/gameStore'
+import FunctionTooltip from './FunctionTooltip'
 
 const CodeEditor = ({ onCodeChange, onRunCode, onStopCode, isRunning, error, isCompleted }) => {
   const editorRef = useRef(null)
@@ -379,21 +380,51 @@ const CodeEditor = ({ onCodeChange, onRunCode, onStopCode, isRunning, error, isC
             <span className="text-sm text-slate-400">Available Functions:</span>
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">move()</span>
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">move_backward()</span>
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">turn_left()</span>
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">turn_right()</span>
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">turn_around()</span>
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">move_steps(n)</span>
-            <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded">face(dir)</span>
-            <span className="px-2 py-1 bg-green-900/50 text-green-300 rounded">pick_gem()</span>
-            <span className="px-2 py-1 bg-purple-900/50 text-purple-300 rounded">get_position()</span>
-            <span className="px-2 py-1 bg-purple-900/50 text-purple-300 rounded">get_direction()</span>
-            <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded">hero.moveRight(n)</span>
-            <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded">hero.moveLeft(n)</span>
-            <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded">hero.moveUp(n)</span>
-            <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded">hero.moveDown(n)</span>
-            <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded">hero.moveXY(x,z)</span>
+            <FunctionTooltip functionName="move()">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">move()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="move_backward()">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">move_backward()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="turn_left()">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">turn_left()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="turn_right()">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">turn_right()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="turn_around()">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">turn_around()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="move_steps(n)">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">move_steps(n)</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="face(dir)">
+              <span className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded cursor-help hover:bg-blue-800/70 transition-colors">face(dir)</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="pick_gem()">
+              <span className="px-2 py-1 bg-green-900/50 text-green-300 rounded cursor-help hover:bg-green-800/70 transition-colors">pick_gem()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="get_position()">
+              <span className="px-2 py-1 bg-purple-900/50 text-purple-300 rounded cursor-help hover:bg-purple-800/70 transition-colors">get_position()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="get_direction()">
+              <span className="px-2 py-1 bg-purple-900/50 text-purple-300 rounded cursor-help hover:bg-purple-800/70 transition-colors">get_direction()</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="hero.moveRight(n)">
+              <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded cursor-help hover:bg-indigo-800/70 transition-colors">hero.moveRight(n)</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="hero.moveLeft(n)">
+              <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded cursor-help hover:bg-indigo-800/70 transition-colors">hero.moveLeft(n)</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="hero.moveUp(n)">
+              <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded cursor-help hover:bg-indigo-800/70 transition-colors">hero.moveUp(n)</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="hero.moveDown(n)">
+              <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded cursor-help hover:bg-indigo-800/70 transition-colors">hero.moveDown(n)</span>
+            </FunctionTooltip>
+            <FunctionTooltip functionName="hero.moveXY(x,z)">
+              <span className="px-2 py-1 bg-indigo-900/50 text-indigo-300 rounded cursor-help hover:bg-indigo-800/70 transition-colors">hero.moveXY(x,z)</span>
+            </FunctionTooltip>
           </div>
         </div>
       </div>

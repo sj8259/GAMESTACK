@@ -60,15 +60,27 @@ export default {
         'mono': ['Monaco', 'Menlo', 'Ubuntu Mono', 'monospace'],
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
+        'float': 'float 20s ease-in-out infinite',
+        'float-reverse': 'float-reverse 25s ease-in-out infinite',
+        'meshMove': 'meshMove 15s ease-in-out infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'bounce-slow': 'bounce 2s infinite',
         'spin-slow': 'spin 3s linear infinite',
       },
       keyframes: {
         float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+        },
+        'float-reverse': {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(-30px, 30px) scale(1.1)' },
+          '66%': { transform: 'translate(20px, -20px) scale(0.9)' },
+        },
+        meshMove: {
+          '0%, 100%': { backgroundPosition: '0% 0%' },
+          '50%': { backgroundPosition: '100% 100%' },
         }
       },
       boxShadow: {

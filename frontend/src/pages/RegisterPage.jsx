@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Gamepad2, Mail, Lock, User, ArrowRight, Check, X } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check, X } from 'lucide-react'
 import useAuthStore from '../store/authStore'
+import VantaBackground from '../components/VantaBackground'
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -101,19 +102,36 @@ const RegisterPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Vanta.js RINGS Background - Purple/Pink Theme (Opposite of Login) */}
+      <VantaBackground 
+        options={{
+          backgroundColor: 0x0a0a0a,
+          color: 0xec4899, // Pink/Magenta - opposite color of blue login
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00
+        }}
+      />
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" style={{ zIndex: 1 }} />
+
+      <div className="max-w-md w-full space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
-              <Gamepad2 className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-gradient-to-br from-pink-900/30 to-purple-900/30 rounded-full flex items-center justify-center border-2 border-pink-600/50">
+              <img src="/favicon.svg" alt="GameStack" className="w-10 h-10" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gradient mb-2">
+          <h2 className="text-3xl font-bold text-pink-300 mb-2 star-wars-title">
             Join GameStack
           </h2>
-          <p className="text-slate-400">
+          <p className="text-pink-200/70">
             Start your coding adventure today
           </p>
         </div>
@@ -123,12 +141,12 @@ const RegisterPage = () => {
           <div className="space-y-4">
             {/* Username */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-pink-200 mb-2">
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-slate-400" />
+                  <User className="h-5 w-5 text-pink-400/60" />
                 </div>
                 <input
                   id="username"
@@ -146,12 +164,12 @@ const RegisterPage = () => {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-pink-200 mb-2">
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-slate-400" />
+                  <Mail className="h-5 w-5 text-pink-400/60" />
                 </div>
                 <input
                   id="email"
@@ -169,12 +187,12 @@ const RegisterPage = () => {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-pink-200 mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-slate-400" />
+                  <Lock className="h-5 w-5 text-pink-400/60" />
                 </div>
                 <input
                   id="password"
@@ -193,9 +211,9 @@ const RegisterPage = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-slate-400 hover:text-slate-300" />
+                    <EyeOff className="h-5 w-5 text-pink-400/60 hover:text-pink-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-slate-400 hover:text-slate-300" />
+                    <Eye className="h-5 w-5 text-pink-400/60 hover:text-pink-300" />
                   )}
                 </button>
               </div>
@@ -203,8 +221,8 @@ const RegisterPage = () => {
 
             {/* Password Requirements */}
             {formData.password && (
-              <div className="bg-slate-800/50 rounded-lg p-3 space-y-2">
-                <div className="text-sm font-medium text-slate-300 mb-2">Password Requirements:</div>
+              <div className="bg-pink-900/20 rounded-sm border border-pink-700/30 p-3 space-y-2">
+                <div className="text-sm font-medium text-pink-200 mb-2">Password Requirements:</div>
                 <div className="space-y-1 text-sm">
                   <div className={`flex items-center space-x-2 ${getCheckColor(passwordChecks.length)}`}>
                     {getCheckIcon(passwordChecks.length)}
@@ -228,12 +246,12 @@ const RegisterPage = () => {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-pink-200 mb-2">
                 Confirm Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-slate-400" />
+                  <Lock className="h-5 w-5 text-pink-400/60" />
                 </div>
                 <input
                   id="confirmPassword"
@@ -252,9 +270,9 @@ const RegisterPage = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-5 w-5 text-slate-400 hover:text-slate-300" />
+                    <EyeOff className="h-5 w-5 text-pink-400/60 hover:text-pink-300" />
                   ) : (
-                    <Eye className="h-5 w-5 text-slate-400 hover:text-slate-300" />
+                    <Eye className="h-5 w-5 text-pink-400/60 hover:text-pink-300" />
                   )}
                 </button>
               </div>
@@ -298,10 +316,10 @@ const RegisterPage = () => {
           {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-700" />
+              <div className="w-full border-t border-pink-700/30" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-slate-900 text-slate-400">Already have an account?</span>
+              <span className="px-2 bg-black/50 text-pink-200/70">Already have an account?</span>
             </div>
           </div>
 
@@ -309,7 +327,7 @@ const RegisterPage = () => {
           <div className="text-center">
             <Link
               to="/login"
-              className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              className="text-pink-400 hover:text-pink-300 font-medium transition-colors star-wars-glow"
             >
               Sign in to your account
             </Link>

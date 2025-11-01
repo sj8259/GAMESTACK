@@ -137,11 +137,43 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black py-8 relative">
-      {/* Star Wars Background Effect */}
-      <div className="fixed inset-0 pointer-events-none opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(30, 58, 138, 0.15) 0%, transparent 70%)`,
+    <div className="min-h-screen bg-black py-8 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-950 to-black" />
+        
+        {/* Large floating orbs */}
+        <div className="absolute rounded-full blur-3xl opacity-20 animate-float" style={{
+          width: '800px',
+          height: '800px',
+          background: 'radial-gradient(circle, rgba(30, 58, 138, 0.4) 0%, transparent 70%)',
+          top: '-10%',
+          left: '-5%',
+        }} />
+        <div className="absolute rounded-full blur-3xl opacity-20 animate-float-reverse" style={{
+          width: '700px',
+          height: '700px',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)',
+          bottom: '-10%',
+          right: '-5%',
+        }} />
+        
+        {/* Animated gradient mesh */}
+        <div className="absolute inset-0 opacity-30 animate-meshMove" style={{
+          background: `
+            radial-gradient(ellipse 1200px 900px at 20% 30%, rgba(30, 58, 138, 0.35) 0%, transparent 50%),
+            radial-gradient(ellipse 1000px 800px at 80% 70%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+            radial-gradient(ellipse 1500px 1200px at 50% 50%, rgba(15, 23, 42, 0.6) 0%, transparent 60%)
+          `,
+        }} />
+        
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `
+            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
         }} />
       </div>
 
