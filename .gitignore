@@ -4,6 +4,10 @@ node_modules/
 # Build outputs
 frontend/dist/
 **/dist/
+target/
+**/target/
+*.class
+*.jar
 
 # Logs
 logs/
@@ -17,9 +21,11 @@ yarn-error.log*
 **/.env
 backend/config.env
 backend/config.env.example
+backend-node/config.env
 
 # Editor/OS
 .DS_Store
+._*
 .vscode/
 .idea/
 *.swp

@@ -1,0 +1,32 @@
+server:
+  port: 3001
+
+spring:
+  application:
+    name: gamestack-backend
+  
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/gamestack
+      auto-index-creation: true
+  
+  security:
+    jwt:
+      secret: your_jwt_secret_key_here_make_it_long_and_secure_at_least_64_characters_long_for_hs512_algorithm
+      expiration: 604800000 # 7 days in milliseconds
+
+logging:
+  level:
+    com.gamestack: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
