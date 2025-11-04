@@ -1,46 +1,43 @@
 package com.gamestack.repository;
 
 import com.gamestack.entity.Lesson;
-import com.gamestack.entity.Difficulty;
-import com.gamestack.entity.Concept;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface LessonRepository extends JpaRepository<Lesson, Long> {
+public interface LessonRepository extends MongoRepository<Lesson, String> {
     
-    @Query("SELECT l FROM Lesson l WHERE l.isPublished = true ORDER BY l.level ASC, l.order ASC")
+    @Query("{ 'isPublished': true }")
     List<Lesson> findByIsPublishedTrueOrderByLevelAscOrderAsc();
     
     List<Lesson> findByIsPublishedTrueAndLevel(Integer level);
     
-    List<Lesson> findByIsPublishedTrueAndDifficulty(Difficulty difficulty);
+    List<Lesson> findByIsPublishedTrueAndDifficulty(String difficulty);
     
-    List<Lesson> findByIsPublishedTrueAndConceptsContaining(Concept concept);
+    List<Lesson> findByIsPublishedTrueAndConceptsContaining(String concept);
     
-    @Query("SELECT l FROM Lesson l WHERE l.isPublished = true AND l.level = :level ORDER BY l.order ASC")
-    List<Lesson> findPublishedByLevelOrderByOrder(@Param("level") Integer level);
+    @Query("{ 'isPublished': true, 'level': ?0 }")
+    List<Lesson> findPublishedByLevelOrderByOrder(Integer level);
     
-    @Query("SELECT l FROM Lesson l WHERE l.isPublished = true AND l.difficulty = :difficulty ORDER BY l.level ASC, l.order ASC")
-    List<Lesson> findPublishedByDifficultyOrderByLevelAndOrder(@Param("difficulty") Difficulty difficulty);
+    @Query("{ 'isPublished': true, 'difficulty': ?0 }")
+    List<Lesson> findPublishedByDifficultyOrderByLevelAndOrder(String difficulty);
     
-    @Query("SELECT l FROM Lesson l WHERE l.isPublished = true AND :concept MEMBER OF l.concepts ORDER BY l.level ASC, l.order ASC")
-    List<Lesson> findPublishedByConceptOrderByLevelAndOrder(@Param("concept") Concept concept);
+    @Query("{ 'isPublished': true, 'concepts': { $in: [?0] } }")
+    List<Lesson> findPublishedByConceptOrderByLevelAndOrder(String concept);
     
-    @Query("SELECT l FROM Lesson l WHERE l.isPublished = true AND l.level = :level AND l.difficulty = :difficulty ORDER BY l.order ASC")
-    List<Lesson> findPublishedByLevelAndDifficultyOrderByOrder(@Param("level") Integer level, @Param("difficulty") Difficulty difficulty);
+    @Query("{ 'isPublished': true, 'level': ?0, 'difficulty': ?1 }")
+    List<Lesson> findPublishedByLevelAndDifficultyOrderByOrder(Integer level, String difficulty);
     
-    List<Lesson> findByCreatedById(Long createdById);
+    List<Lesson> findByCreatedBy(String createdBy);
     
-    @Query("SELECT COUNT(l) FROM Lesson l WHERE l.isPublished = true")
+    @Query(value = "{ 'isPublished': true }", count = true)
     Long countPublishedLessons();
     
-    @Query("SELECT COUNT(l) FROM Lesson l WHERE l.isPublished = true AND l.difficulty = :difficulty")
-    Long countPublishedLessonsByDifficulty(@Param("difficulty") Difficulty difficulty);
+    @Query(value = "{ 'isPublished': true, 'difficulty': ?0 }", count = true)
+    Long countPublishedLessonsByDifficulty(String difficulty);
 }
 
 

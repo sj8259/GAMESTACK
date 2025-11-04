@@ -1,12 +1,8 @@
 package com.gamestack.controller;
 
 import com.gamestack.entity.Lesson;
-import com.gamestack.entity.Difficulty;
-import com.gamestack.entity.Concept;
 import com.gamestack.entity.User;
 import com.gamestack.entity.CompletedLesson;
-import com.gamestack.entity.Achievement;
-import com.gamestack.repository.CompletedLessonRepository;
 import com.gamestack.service.LessonService;
 import com.gamestack.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +28,6 @@ public class LessonController {
     @Autowired
     private UserService userService;
     
-    @Autowired
-    private CompletedLessonRepository completedLessonRepository;
-    
     @GetMapping
     public ResponseEntity<?> getAllLessons(
             @RequestParam(required = false) Integer level,
@@ -45,13 +38,13 @@ public class LessonController {
             List<Lesson> lessons;
             
             if (level != null && difficulty != null) {
-                lessons = lessonService.getLessonsByLevelAndDifficulty(level, Difficulty.valueOf(difficulty.toUpperCase()));
+                lessons = lessonService.getLessonsByLevelAndDifficulty(level, difficulty);
             } else if (level != null) {
                 lessons = lessonService.getLessonsByLevel(level);
             } else if (difficulty != null) {
-                lessons = lessonService.getLessonsByDifficulty(Difficulty.valueOf(difficulty.toUpperCase()));
+                lessons = lessonService.getLessonsByDifficulty(difficulty);
             } else if (concept != null) {
-                lessons = lessonService.getLessonsByConcept(Concept.valueOf(concept.toUpperCase()));
+                lessons = lessonService.getLessonsByConcept(concept);
             } else {
                 lessons = lessonService.getAllPublishedLessons();
             }
@@ -69,9 +62,15 @@ public class LessonController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<?> getLesson(@PathVariable Long id) {
+    public ResponseEntity<?> getLesson(@PathVariable String id) {
         try {
             Lesson lesson = lessonService.findById(id);
+            
+            if (lesson == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Lesson not found");
+                return ResponseEntity.status(404).body(error);
+            }
             
             if (!lesson.getIsPublished()) {
                 // Check if user is admin
@@ -79,7 +78,7 @@ public class LessonController {
                 if (authentication != null && authentication.isAuthenticated()) {
                     String username = authentication.getName();
                     User user = userService.findByUsername(username);
-                    if (!user.getIsAdmin()) {
+                    if (user == null || !user.getIsAdmin()) {
                         Map<String, String> error = new HashMap<>();
                         error.put("message", "Lesson not found");
                         return ResponseEntity.status(404).body(error);
@@ -109,13 +108,14 @@ public class LessonController {
             String username = authentication.getName();
             User user = userService.findByUsername(username);
             
-            if (!user.getIsAdmin()) {
+            if (user == null || !user.getIsAdmin()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("message", "Access denied. Admin privileges required.");
                 return ResponseEntity.status(403).body(error);
             }
             
-            lesson = lessonService.createLesson(lesson, user);
+            lesson.setCreatedBy(user.getId());
+            lesson = lessonService.createLesson(lesson);
             
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Lesson created successfully");
@@ -124,19 +124,19 @@ public class LessonController {
             return ResponseEntity.status(201).body(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
-            error.put("message", "Error creating lesson");
+            error.put("message", "Error creating lesson: " + e.getMessage());
             return ResponseEntity.status(500).body(error);
         }
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateLesson(@PathVariable Long id, @Valid @RequestBody Lesson lesson) {
+    public ResponseEntity<?> updateLesson(@PathVariable String id, @Valid @RequestBody Lesson lesson) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userService.findByUsername(username);
             
-            if (!user.getIsAdmin()) {
+            if (user == null || !user.getIsAdmin()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("message", "Access denied. Admin privileges required.");
                 return ResponseEntity.status(403).body(error);
@@ -158,13 +158,13 @@ public class LessonController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteLesson(@PathVariable Long id) {
+    public ResponseEntity<?> deleteLesson(@PathVariable String id) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userService.findByUsername(username);
             
-            if (!user.getIsAdmin()) {
+            if (user == null || !user.getIsAdmin()) {
                 Map<String, String> error = new HashMap<>();
                 error.put("message", "Access denied. Admin privileges required.");
                 return ResponseEntity.status(403).body(error);
@@ -184,58 +184,71 @@ public class LessonController {
     }
     
     @PostMapping("/{id}/complete")
-    public ResponseEntity<?> completeLesson(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> completeLesson(@PathVariable String id, @RequestBody Map<String, Object> request) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userService.findByUsername(username);
             
+            if (user == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "User not found");
+                return ResponseEntity.status(404).body(error);
+            }
+            
             Lesson lesson = lessonService.findById(id);
+            if (lesson == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Lesson not found");
+                return ResponseEntity.status(404).body(error);
+            }
             
             // Get score from request (default to 100 if not provided)
             Integer score = request.containsKey("score") ? (Integer) request.get("score") : 100;
-            Integer attempts = request.containsKey("attempts") ? (Integer) request.get("attempts") : 1;
             
             // Check if lesson already completed
-            Optional<CompletedLesson> existingCompletion = 
-                completedLessonRepository.findByUserProgressAndLesson(user.getProgress(), lesson);
+            boolean alreadyCompleted = user.hasCompletedLesson(id);
             
             CompletedLesson completedLesson;
-            if (existingCompletion.isPresent()) {
-                // Update existing completion
-                completedLesson = existingCompletion.get();
-                completedLesson.setScore(Math.max(score, completedLesson.getScore())); // Keep highest score
-                completedLesson.setAttempts(completedLesson.getAttempts() + attempts);
-                completedLesson = completedLessonRepository.save(completedLesson);
+            if (alreadyCompleted) {
+                // Update existing completion - find and update
+                Optional<CompletedLesson> existing = user.getProgress().getCompletedLessons().stream()
+                    .filter(cl -> cl.getLessonId().equals(id))
+                    .findFirst();
+                
+                if (existing.isPresent()) {
+                    completedLesson = existing.get();
+                    completedLesson.setScore(Math.max(score, completedLesson.getScore())); // Keep highest score
+                } else {
+                    completedLesson = new CompletedLesson(id, score);
+                    user.getProgress().getCompletedLessons().add(completedLesson);
+                }
             } else {
                 // Create new completion
-                completedLesson = new CompletedLesson(lesson, user.getProgress(), score);
-                completedLesson.setAttempts(attempts);
-                completedLesson = completedLessonRepository.save(completedLesson);
-                
-                // Update user progress
+                completedLesson = new CompletedLesson(id, score);
                 user.getProgress().getCompletedLessons().add(completedLesson);
                 user.getProgress().setTotalScore(user.getProgress().getTotalScore() + score);
                 user.getProgress().setCurrentLevel(Math.floorDiv(user.getProgress().getCompletedLessons().size(), 5) + 1);
                 
                 // Award achievements
-                if (!user.getAchievements().contains(Achievement.FIRST_LESSON)) {
-                    user.getAchievements().add(Achievement.FIRST_LESSON);
+                List<String> achievements = user.getAchievements();
+                if (!achievements.contains("first_lesson")) {
+                    achievements.add("first_lesson");
                 }
                 if (user.getProgress().getCompletedLessons().size() >= 5 && 
-                    !user.getAchievements().contains(Achievement.PERSISTENT)) {
-                    user.getAchievements().add(Achievement.PERSISTENT);
+                    !achievements.contains("persistent")) {
+                    achievements.add("persistent");
                 }
                 if (user.getProgress().getCompletedLessons().size() >= 10 && 
-                    !user.getAchievements().contains(Achievement.EXPLORER)) {
-                    user.getAchievements().add(Achievement.EXPLORER);
+                    !achievements.contains("explorer")) {
+                    achievements.add("explorer");
                 }
-                if (score == 100 && !user.getAchievements().contains(Achievement.PERFECT_SCORE)) {
-                    user.getAchievements().add(Achievement.PERFECT_SCORE);
+                if (score == 100 && !achievements.contains("perfect_score")) {
+                    achievements.add("perfect_score");
                 }
-                
-                userService.save(user);
             }
+            
+            userService.save(user);
             
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Lesson completed successfully");
@@ -251,16 +264,28 @@ public class LessonController {
     }
     
     @GetMapping("/{id}/progress")
-    public ResponseEntity<?> getLessonProgress(@PathVariable Long id) {
+    public ResponseEntity<?> getLessonProgress(@PathVariable String id) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             User user = userService.findByUsername(username);
             
-            Lesson lesson = lessonService.findById(id);
+            if (user == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "User not found");
+                return ResponseEntity.status(404).body(error);
+            }
             
-            Optional<CompletedLesson> completedLesson = 
-                completedLessonRepository.findByUserProgressAndLesson(user.getProgress(), lesson);
+            Lesson lesson = lessonService.findById(id);
+            if (lesson == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Lesson not found");
+                return ResponseEntity.status(404).body(error);
+            }
+            
+            Optional<CompletedLesson> completedLesson = user.getProgress().getCompletedLessons().stream()
+                .filter(cl -> cl.getLessonId().equals(id))
+                .findFirst();
             
             Map<String, Object> response = new HashMap<>();
             response.put("completed", completedLesson.isPresent());
@@ -268,7 +293,6 @@ public class LessonController {
             if (completedLesson.isPresent()) {
                 Map<String, Object> completionData = new HashMap<>();
                 completionData.put("score", completedLesson.get().getScore());
-                completionData.put("attempts", completedLesson.get().getAttempts());
                 completionData.put("completedAt", completedLesson.get().getCompletedAt());
                 response.put("completion", completionData);
             }

@@ -244,7 +244,7 @@ const GameWorld = ({ worldState, playerState, isCompleted }) => {
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-h-[400px]">
       <Canvas
         camera={{ 
           position: [8, 6, 8], 

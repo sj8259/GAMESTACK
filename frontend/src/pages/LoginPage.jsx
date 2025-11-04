@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Eye, EyeOff, Gamepad2, Mail, Lock, ArrowRight } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 import useAuthStore from '../store/authStore'
 import VantaBackground from '../components/VantaBackground'
 
@@ -59,11 +59,10 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Vanta.js RINGS Background - Blue Theme */}
       <VantaBackground 
         options={{
           backgroundColor: 0x0a0a0a,
-          color: 0x2563eb, // Cobalt blue matching Star Wars theme
+          color: 0x2563eb,
           mouseControls: true,
           touchControls: true,
           gyroControls: false,
@@ -73,7 +72,6 @@ const LoginPage = () => {
           scaleMobile: 1.00
         }}
       />
-      {/* Dark overlay for better text readability */}
       <div className="absolute inset-0 bg-black/40 pointer-events-none" style={{ zIndex: 1 }} />
 
       <div className="max-w-md w-full space-y-8 relative z-10">
@@ -199,18 +197,6 @@ const LoginPage = () => {
             </Link>
           </div>
         </form>
-
-        {/* Demo Account */}
-        <div className="mt-8 p-4 bg-blue-900/20 rounded-sm border border-blue-700/30">
-          <h3 className="text-sm font-medium text-blue-200 mb-2">Demo Account</h3>
-          <p className="text-xs text-blue-200/60 mb-2">
-            Try the platform with our demo account:
-          </p>
-          <div className="text-xs text-blue-200/50 space-y-1">
-            <div><strong>Email:</strong> demo@gamestack.dev</div>
-            <div><strong>Password:</strong> demo123</div>
-          </div>
-        </div>
       </div>
     </div>
   )

@@ -1,23 +1,16 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "target_states")
 public class TargetState {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "player_position_id")
+    @Field("playerPosition")
     private Position playerPosition;
     
-    @Column(name = "gems_collected", nullable = false)
+    @Field("gemsCollected")
     private Integer gemsCollected = 0;
     
-    @Column(name = "max_moves", nullable = false)
+    @Field("maxMoves")
     private Integer maxMoves = 100;
     
     // Constructors
@@ -26,14 +19,6 @@ public class TargetState {
     }
     
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public Position getPlayerPosition() {
         return playerPosition;
     }
@@ -58,6 +43,8 @@ public class TargetState {
         this.maxMoves = maxMoves;
     }
 }
+
+
 
 
 

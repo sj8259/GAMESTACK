@@ -21,26 +21,26 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
     
-    public String generateToken(Long userId) {
+    public String generateToken(String userId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
         
         return Jwts.builder()
-                .setSubject(userId.toString())
+                .setSubject(userId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
     
-    public Long getUserIdFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
         
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject();
     }
     
     public boolean validateToken(String token) {
@@ -70,6 +70,8 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 }
+
+
 
 
 

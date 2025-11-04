@@ -4,16 +4,45 @@ server:
 spring:
   application:
     name: gamestack-backend
+  main:
+    allow-bean-definition-overriding: true
   
   data:
     mongodb:
       uri: mongodb://localhost:27017/gamestack
-      auto-index-creation: true
+      auto-index-creation: false
+  
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
   
   security:
     jwt:
       secret: your_jwt_secret_key_here_make_it_long_and_secure_at_least_64_characters_long_for_hs512_algorithm
       expiration: 604800000 # 7 days in milliseconds
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
+            scope:
+              - email
+              - profile
+  
+app:
+  name: GameStack
 
 logging:
   level:

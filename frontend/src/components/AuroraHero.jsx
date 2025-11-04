@@ -27,20 +27,7 @@ const AuroraHero = () => {
           transition={{ duration: 2 }}
           className="absolute inset-0 bg-gradient-to-r from-blue-600/15 via-purple-600/15 to-pink-600/15"
         />
-        <motion.div
-          className="absolute -inset-4"
-          animate={{
-            rotate: [0, 90, 180, 270, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          style={{
-            background: "conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.4), transparent 30%)",
-          }}
-        />
+
         <motion.div
           className="absolute inset-0"
           animate={{

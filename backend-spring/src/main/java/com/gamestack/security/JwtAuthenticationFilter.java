@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
-                username = jwtUtil.getUserIdFromToken(jwt).toString();
+                username = jwtUtil.getUserIdFromToken(jwt);
             } catch (Exception e) {
                 logger.error("JWT token is invalid: " + e.getMessage());
             }
@@ -46,14 +47,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                Long userId = Long.parseLong(username);
+                String userId = username;
                 User user = userRepository.findById(userId).orElse(null);
                 
                 if (user != null && jwtUtil.validateToken(jwt) && !jwtUtil.isTokenExpired(jwt)) {
+                    List<String> authorities = new ArrayList<>();
+                    authorities.add("ROLE_USER");
+                    if (user.getIsAdmin() != null && user.getIsAdmin()) {
+                        authorities.add("ROLE_ADMIN");
+                    }
+                    
                     UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                             .username(user.getUsername())
                             .password(user.getPassword())
-                            .authorities(new ArrayList<>())
+                            .authorities(authorities.toArray(new String[0]))
                             .build();
                     
                     UsernamePasswordAuthenticationToken authToken = 

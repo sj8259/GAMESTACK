@@ -1,73 +1,45 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "completed_lessons")
+import java.util.Date;
+
 public class CompletedLesson {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Field("lessonId")
+    private String lessonId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id", nullable = false)
-    private Lesson lesson;
+    @Field("completedAt")
+    private Date completedAt;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_progress_id", nullable = false)
-    private UserProgress userProgress;
-    
-    @Column(name = "completed_at", nullable = false)
-    private LocalDateTime completedAt;
-    
-    @Column(name = "score", nullable = false)
+    @Field("score")
     private Integer score;
     
-    @Column(name = "attempts")
-    private Integer attempts = 1;
-    
     // Constructors
-    public CompletedLesson() {}
+    public CompletedLesson() {
+        this.completedAt = new Date();
+    }
     
-    public CompletedLesson(Lesson lesson, UserProgress userProgress, Integer score) {
-        this.lesson = lesson;
-        this.userProgress = userProgress;
+    public CompletedLesson(String lessonId, Integer score) {
+        this.lessonId = lessonId;
         this.score = score;
-        this.completedAt = LocalDateTime.now();
+        this.completedAt = new Date();
     }
     
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public String getLessonId() {
+        return lessonId;
     }
     
-    public void setId(Long id) {
-        this.id = id;
+    public void setLessonId(String lessonId) {
+        this.lessonId = lessonId;
     }
     
-    public Lesson getLesson() {
-        return lesson;
-    }
-    
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
-    }
-    
-    public UserProgress getUserProgress() {
-        return userProgress;
-    }
-    
-    public void setUserProgress(UserProgress userProgress) {
-        this.userProgress = userProgress;
-    }
-    
-    public LocalDateTime getCompletedAt() {
+    public Date getCompletedAt() {
         return completedAt;
     }
     
-    public void setCompletedAt(LocalDateTime completedAt) {
+    public void setCompletedAt(Date completedAt) {
         this.completedAt = completedAt;
     }
     
@@ -78,15 +50,9 @@ public class CompletedLesson {
     public void setScore(Integer score) {
         this.score = score;
     }
-    
-    public Integer getAttempts() {
-        return attempts;
-    }
-    
-    public void setAttempts(Integer attempts) {
-        this.attempts = attempts;
-    }
 }
+
+
 
 
 

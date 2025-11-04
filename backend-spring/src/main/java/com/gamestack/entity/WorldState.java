@@ -1,39 +1,25 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "world_states")
 public class WorldState {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "player_id")
+    @Field("player")
     private Player player;
     
-    @OneToMany(mappedBy = "worldState", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Field("gems")
     private List<Gem> gems = new ArrayList<>();
     
-    @OneToMany(mappedBy = "worldState", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Field("obstacles")
     private List<Obstacle> obstacles = new ArrayList<>();
     
     // Constructors
     public WorldState() {}
     
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public Player getPlayer() {
         return player;
     }
@@ -58,6 +44,8 @@ public class WorldState {
         this.obstacles = obstacles;
     }
 }
+
+
 
 
 

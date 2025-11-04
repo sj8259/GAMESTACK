@@ -322,7 +322,7 @@ const GamePage = () => {
           gutterSize={8}
         >
           {/* 3D World */}
-          <div className="rounded-lg overflow-hidden bg-slate-800/30 border border-slate-700/50">
+          <div className="rounded-lg overflow-hidden bg-slate-800/30 border border-slate-700/50 h-full">
             <GameWorld 
               worldState={worldState}
               playerState={playerState}

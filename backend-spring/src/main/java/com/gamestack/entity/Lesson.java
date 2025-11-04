@@ -1,97 +1,83 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "lessons")
-@EntityListeners(AuditingEntityListener.class)
+@Document(collection = "lessons")
 public class Lesson {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     
     @NotBlank(message = "Lesson title is required")
     @Size(max = 100, message = "Title cannot exceed 100 characters")
-    @Column(nullable = false)
     private String title;
     
     @NotBlank(message = "Lesson description is required")
     @Size(max = 500, message = "Description cannot exceed 500 characters")
-    @Column(nullable = false)
     private String description;
     
     @NotBlank(message = "Lesson instructions are required")
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String instructions;
     
-    @ElementCollection
-    @CollectionTable(name = "lesson_hints", joinColumns = @JoinColumn(name = "lesson_id"))
-    @Column(name = "hint", columnDefinition = "TEXT")
     private List<String> hints = new ArrayList<>();
     
     @NotNull(message = "Level is required")
     @Min(value = 1, message = "Level must be at least 1")
     @Max(value = 50, message = "Level cannot exceed 50")
-    @Column(nullable = false)
+    @Indexed
     private Integer level;
     
     @NotNull(message = "Order is required")
     @Min(value = 1, message = "Order must be at least 1")
-    @Column(name = "lesson_order", nullable = false)
+    @Indexed
     private Integer order;
     
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Difficulty difficulty = Difficulty.BEGINNER;
+    @Field("difficulty")
+    private String difficulty = "beginner";
     
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "lesson_concepts", joinColumns = @JoinColumn(name = "lesson_id"))
-    @Column(name = "concept")
-    private List<Concept> concepts = new ArrayList<>();
+    private List<String> concepts = new ArrayList<>();
     
-    @Column(name = "starting_code", columnDefinition = "TEXT")
+    @Field("startingCode")
     private String startingCode = "# Write your code here\n# Available functions: move(), turnLeft(), turnRight(), pickGem()\n\n";
     
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "world_state_id", nullable = true)
+    @Field("worldState")
     private WorldState worldState;
     
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "target_state_id", nullable = true)
+    @Field("targetState")
     private TargetState targetState;
     
-    @Column(name = "success_message", columnDefinition = "TEXT")
+    @Field("successMessage")
     private String successMessage = "Congratulations! You completed the lesson!";
     
-    @Column(name = "is_published", nullable = false)
+    @Field("isPublished")
+    @Indexed
     private Boolean isPublished = false;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    @Field("createdBy")
+    private String createdBy;
     
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Field("createdAt")
     private LocalDateTime createdAt;
     
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Field("updatedAt")
     private LocalDateTime updatedAt;
     
     // Constructors
     public Lesson() {}
     
-    public Lesson(String title, String description, String instructions, Integer level, Integer order, User createdBy) {
+    public Lesson(String title, String description, String instructions, Integer level, Integer order, String createdBy) {
         this.title = title;
         this.description = description;
         this.instructions = instructions;
@@ -101,11 +87,11 @@ public class Lesson {
     }
     
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
     
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -157,19 +143,19 @@ public class Lesson {
         this.order = order;
     }
     
-    public Difficulty getDifficulty() {
+    public String getDifficulty() {
         return difficulty;
     }
     
-    public void setDifficulty(Difficulty difficulty) {
+    public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
     
-    public List<Concept> getConcepts() {
+    public List<String> getConcepts() {
         return concepts;
     }
     
-    public void setConcepts(List<Concept> concepts) {
+    public void setConcepts(List<String> concepts) {
         this.concepts = concepts;
     }
     
@@ -213,11 +199,11 @@ public class Lesson {
         this.isPublished = isPublished;
     }
     
-    public User getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
     
-    public void setCreatedBy(User createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
     
@@ -239,7 +225,7 @@ public class Lesson {
     
     // Business methods
     public int getTotalGems() {
-        return worldState != null ? worldState.getGems().size() : 0;
+        return worldState != null && worldState.getGems() != null ? worldState.getGems().size() : 0;
     }
     
     public boolean checkCompletion(PlayerState playerState) {

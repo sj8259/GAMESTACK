@@ -2,6 +2,7 @@ package com.gamestack.controller;
 
 import com.gamestack.entity.User;
 import com.gamestack.service.UserService;
+import com.gamestack.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,9 @@ public class UserController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private LessonService lessonService;
     
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile() {
@@ -40,19 +44,32 @@ public class UserController {
             double completionRate = totalLessons > 0 ? (completed * 100.0 / totalLessons) : 0;
             stats.put("completionRate", Math.round(completionRate));
             
-            // Level stats
+            // Level stats - need to fetch lessons to get level info
             Map<String, Integer> levelStats = new HashMap<>();
             user.getProgress().getCompletedLessons().forEach(completedLesson -> {
-                if (completedLesson.getLesson() != null) {
-                    Integer level = completedLesson.getLesson().getLevel();
-                    levelStats.put(level.toString(), levelStats.getOrDefault(level.toString(), 0) + 1);
+                try {
+                    var lesson = lessonService.findById(completedLesson.getLessonId());
+                    if (lesson != null) {
+                        Integer level = lesson.getLevel();
+                        levelStats.put(level.toString(), levelStats.getOrDefault(level.toString(), 0) + 1);
+                    }
+                } catch (Exception e) {
+                    // Skip if lesson not found
                 }
             });
             stats.put("levelStats", levelStats);
             
-            // Build progress with completed lessons
+            // Build progress with completed lessons (simplified)
             Map<String, Object> progress = new HashMap<>();
-            progress.put("completedLessons", user.getProgress().getCompletedLessons());
+            List<Map<String, Object>> completedLessonsData = new ArrayList<>();
+            user.getProgress().getCompletedLessons().forEach(completedLesson -> {
+                Map<String, Object> lessonData = new HashMap<>();
+                lessonData.put("lessonId", completedLesson.getLessonId());
+                lessonData.put("score", completedLesson.getScore());
+                lessonData.put("completedAt", completedLesson.getCompletedAt());
+                completedLessonsData.add(lessonData);
+            });
+            progress.put("completedLessons", completedLessonsData);
             
             // Build full user response
             Map<String, Object> userResponse = new HashMap<>();
@@ -60,6 +77,7 @@ public class UserController {
             userResponse.put("username", user.getUsername());
             userResponse.put("email", user.getEmail());
             userResponse.put("avatar", user.getAvatar());
+            userResponse.put("customAvatar", user.getCustomAvatar());
             userResponse.put("createdAt", user.getCreatedAt());
             userResponse.put("stats", stats);
             userResponse.put("progress", progress);
@@ -71,7 +89,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
-            error.put("message", "Error fetching profile");
+            error.put("message", "Error fetching profile: " + e.getMessage());
             return ResponseEntity.status(500).body(error);
         }
     }
@@ -86,20 +104,24 @@ public class UserController {
             // Build lessons with progress
             List<Map<String, Object>> lessons = new ArrayList<>();
             user.getProgress().getCompletedLessons().forEach(completedLesson -> {
-                if (completedLesson.getLesson() != null) {
-                    Map<String, Object> lessonData = new HashMap<>();
-                    lessonData.put("_id", completedLesson.getLesson().getId());
-                    lessonData.put("title", completedLesson.getLesson().getTitle());
-                    lessonData.put("level", completedLesson.getLesson().getLevel());
-                    
-                    Map<String, Object> progressData = new HashMap<>();
-                    progressData.put("completed", true);
-                    progressData.put("score", completedLesson.getScore());
-                    progressData.put("attempts", completedLesson.getAttempts());
-                    progressData.put("completedAt", completedLesson.getCompletedAt());
-                    
-                    lessonData.put("progress", progressData);
-                    lessons.add(lessonData);
+                try {
+                    var lesson = lessonService.findById(completedLesson.getLessonId());
+                    if (lesson != null) {
+                        Map<String, Object> lessonData = new HashMap<>();
+                        lessonData.put("_id", lesson.getId());
+                        lessonData.put("title", lesson.getTitle());
+                        lessonData.put("level", lesson.getLevel());
+                        
+                        Map<String, Object> progressData = new HashMap<>();
+                        progressData.put("completed", true);
+                        progressData.put("score", completedLesson.getScore());
+                        progressData.put("completedAt", completedLesson.getCompletedAt());
+                        
+                        lessonData.put("progress", progressData);
+                        lessons.add(lessonData);
+                    }
+                } catch (Exception e) {
+                    // Skip if lesson not found
                 }
             });
             
@@ -109,7 +131,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
-            error.put("message", "Error fetching progress");
+            error.put("message", "Error fetching progress: " + e.getMessage());
             return ResponseEntity.status(500).body(error);
         }
     }

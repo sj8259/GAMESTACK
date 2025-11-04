@@ -44,9 +44,13 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
     }
     
-    public User findById(Long id) {
+    public User findById(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+    
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
     
     public User save(User user) {
@@ -61,7 +65,9 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("User with this username already exists");
         }
         
-        User user = new User(username, email, password);
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         return userRepository.save(user);
     }
@@ -86,6 +92,8 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByUsername(username);
     }
 }
+
+
 
 
 

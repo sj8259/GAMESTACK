@@ -32,8 +32,9 @@ const LevelSelectPage = () => {
       const response = await api.get('/users/progress')
       const progressMap = {}
       response.data.lessons.forEach(lesson => {
-        if (lesson.progress.completed) {
-          progressMap[lesson._id] = lesson.progress
+        const lessonId = lesson._id || lesson.id
+        if (lesson.progress && lesson.progress.completed) {
+          progressMap[lessonId] = lesson.progress
         }
       })
       setUserProgress(progressMap)
@@ -72,14 +73,18 @@ const LevelSelectPage = () => {
     if (lesson.level > 1) {
       // Need to complete at least one lesson from previous level
       const previousLevelLessons = lessons.filter(l => l.level === lesson.level - 1)
-      return previousLevelLessons.some(l => userProgress[l._id])
+      return previousLevelLessons.some(l => {
+        const lessonId = l.id || l._id
+        return userProgress[lessonId]
+      })
     }
     
     return true
   }
 
   const getLessonStats = (lesson) => {
-    const progress = userProgress[lesson._id]
+    const lessonId = lesson.id || lesson._id
+    const progress = userProgress[lessonId]
     if (!progress) return null
     
     return {
@@ -260,12 +265,13 @@ const LevelSelectPage = () => {
         {/* Lessons Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredLessons.map((lesson) => {
+            const lessonId = lesson.id || lesson._id
             const isUnlocked = isLessonUnlocked(lesson)
             const stats = getLessonStats(lesson)
             
             return (
               <div
-                key={lesson._id}
+                key={lessonId}
                 className={`relative card-hover group ${
                   !isUnlocked ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
@@ -346,7 +352,7 @@ const LevelSelectPage = () => {
                   <div className="flex items-center justify-between">
                     {isUnlocked ? (
                       <Link
-                        to={`/game/${lesson._id}`}
+                        to={`/game/${lessonId}`}
                         className="flex-1 btn-primary text-center group-hover:scale-105 transition-transform"
                       >
                         {stats?.completed ? 'Replay' : 'Start'}

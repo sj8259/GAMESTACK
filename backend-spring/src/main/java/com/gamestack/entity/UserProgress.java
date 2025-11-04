@@ -1,38 +1,27 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "user_progress")
+@Document(collection = "users")
 public class UserProgress {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @OneToMany(mappedBy = "userProgress", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Field("completedLessons")
     private List<CompletedLesson> completedLessons = new ArrayList<>();
     
-    @Column(name = "current_level", nullable = false)
+    @Field("currentLevel")
     private Integer currentLevel = 1;
     
-    @Column(name = "total_score", nullable = false)
+    @Field("totalScore")
     private Integer totalScore = 0;
     
     // Constructors
     public UserProgress() {}
     
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public List<CompletedLesson> getCompletedLessons() {
         return completedLessons;
     }
@@ -57,6 +46,8 @@ public class UserProgress {
         this.totalScore = totalScore;
     }
 }
+
+
 
 
 

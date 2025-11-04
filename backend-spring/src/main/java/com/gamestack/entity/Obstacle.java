@@ -1,46 +1,26 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "obstacles")
 public class Obstacle {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "position_id")
+    @Field("position")
     private Position position;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private ObstacleType type = ObstacleType.WALL;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "world_state_id")
-    private WorldState worldState;
+    @Field("type")
+    private String type = "wall";
     
     // Constructors
     public Obstacle() {
         this.position = new Position();
     }
     
-    public Obstacle(Position position, ObstacleType type) {
+    public Obstacle(Position position, String type) {
         this.position = position;
         this.type = type;
     }
     
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public Position getPosition() {
         return position;
     }
@@ -49,22 +29,16 @@ public class Obstacle {
         this.position = position;
     }
     
-    public ObstacleType getType() {
+    public String getType() {
         return type;
     }
     
-    public void setType(ObstacleType type) {
+    public void setType(String type) {
         this.type = type;
     }
-    
-    public WorldState getWorldState() {
-        return worldState;
-    }
-    
-    public void setWorldState(WorldState worldState) {
-        this.worldState = worldState;
-    }
 }
+
+
 
 
 

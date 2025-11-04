@@ -1,9 +1,6 @@
 package com.gamestack.service;
 
 import com.gamestack.entity.Lesson;
-import com.gamestack.entity.Difficulty;
-import com.gamestack.entity.Concept;
-import com.gamestack.entity.User;
 import com.gamestack.repository.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,29 +22,32 @@ public class LessonService {
         return lessonRepository.findPublishedByLevelOrderByOrder(level);
     }
     
-    public List<Lesson> getLessonsByDifficulty(Difficulty difficulty) {
+    public List<Lesson> getLessonsByDifficulty(String difficulty) {
         return lessonRepository.findPublishedByDifficultyOrderByLevelAndOrder(difficulty);
     }
     
-    public List<Lesson> getLessonsByConcept(Concept concept) {
+    public List<Lesson> getLessonsByConcept(String concept) {
         return lessonRepository.findPublishedByConceptOrderByLevelAndOrder(concept);
     }
     
-    public List<Lesson> getLessonsByLevelAndDifficulty(Integer level, Difficulty difficulty) {
+    public List<Lesson> getLessonsByLevelAndDifficulty(Integer level, String difficulty) {
         return lessonRepository.findPublishedByLevelAndDifficultyOrderByOrder(level, difficulty);
     }
     
-    public Lesson findById(Long id) {
+    public Lesson findById(String id) {
         return lessonRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + id));
+                .orElse(null);
+    }
+    
+    public List<Lesson> findAll() {
+        return lessonRepository.findAll();
     }
     
     public Lesson save(Lesson lesson) {
         return lessonRepository.save(lesson);
     }
     
-    public Lesson createLesson(Lesson lesson, User createdBy) {
-        lesson.setCreatedBy(createdBy);
+    public Lesson createLesson(Lesson lesson) {
         return lessonRepository.save(lesson);
     }
     
@@ -55,26 +55,28 @@ public class LessonService {
         return lessonRepository.save(lesson);
     }
     
-    public void deleteLesson(Long id) {
+    public void deleteLesson(String id) {
         lessonRepository.deleteById(id);
     }
     
-    public List<Lesson> getLessonsByCreator(User creator) {
-        return lessonRepository.findByCreatedById(creator.getId());
+    public List<Lesson> getLessonsByCreator(String createdBy) {
+        return lessonRepository.findByCreatedBy(createdBy);
     }
     
     public Long countPublishedLessons() {
         return lessonRepository.countPublishedLessons();
     }
     
-    public Long countPublishedLessonsByDifficulty(Difficulty difficulty) {
+    public Long countPublishedLessonsByDifficulty(String difficulty) {
         return lessonRepository.countPublishedLessonsByDifficulty(difficulty);
     }
     
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return lessonRepository.existsById(id);
     }
 }
+
+
 
 
 

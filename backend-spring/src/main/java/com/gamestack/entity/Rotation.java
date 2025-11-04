@@ -1,22 +1,16 @@
 package com.gamestack.entity;
 
-import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Entity
-@Table(name = "rotations")
 public class Rotation {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(name = "x", nullable = false)
+    @Field("x")
     private Double x = 0.0;
     
-    @Column(name = "y", nullable = false)
+    @Field("y")
     private Double y = 0.0;
     
-    @Column(name = "z", nullable = false)
+    @Field("z")
     private Double z = 0.0;
     
     // Constructors
@@ -29,14 +23,6 @@ public class Rotation {
     }
     
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public Double getX() {
         return x;
     }
@@ -61,6 +47,8 @@ public class Rotation {
         this.z = z;
     }
 }
+
+
 
 
 
