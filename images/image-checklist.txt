@@ -1,0 +1,17 @@
+Required Images Checklist:
+========================
+
+[ ] landing-page.png          - Landing/home page
+[ ] architecture-diagram.png   - System architecture
+[ ] user-dashboard.png         - User profile dashboard  
+[ ] levels-select-page.png     - Lesson selection page
+[ ] login-page.png             - Login page
+[ ] signup-page.png            - Registration page
+[ ] gameplay-code-editor.png   - Game view with code editor
+[ ] lesson-complete.png        - Completion modal
+[ ] admin-data-view.png        - Admin panel
+
+Instructions:
+1. Copy your screenshot files to this directory
+2. Rename them to match the filenames above
+3. Commit and push to GitHub
