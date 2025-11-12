@@ -5,7 +5,7 @@
     "rootDirectory": "backend-spring"
   },
   "deploy": {
-    "startCommand": "java -jar target/gamestack-backend-1.0.0.jar"
+    "startCommand": "bash start.sh"
   }
 }
 
