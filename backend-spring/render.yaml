@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: gamestack-backend
+    env: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/gamestack-backend-1.0.0.jar
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: 3001
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+

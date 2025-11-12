@@ -1,44 +1,53 @@
+# Dependencies
 node_modules/
-**/node_modules/
-
-# Build outputs
-frontend/dist/
-**/dist/
 target/
-**/target/
-*.class
-*.jar
+.mvn/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*.local
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
-logs/
 *.log
+logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Env
-.env
-**/.env
-backend/config.env
-backend/config.env.example
-backend-node/config.env
+# Build outputs
+dist/
+build/
+*.jar
+!target/gamestack-backend-1.0.0.jar
 
-# Editor/OS
-.DS_Store
-._*
-.vscode/
-.idea/
-*.swp
-
-# Local dev
-coverage/
-.tmp/
+# Temporary files
+*.tmp
+*.temp
 .cache/
 
-# Vite/Monaco caches
-frontend/.vite/
-frontend/.cache/
+# MongoDB
+data/
 
-# Cursor/agent files
-.cursor/
-.agent-tools/
+# Vercel
+.vercel
+
+# Netlify
+.netlify
+
+# Railway
+.railway

@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: gamestack-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: gamestack
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - gamestack-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend-spring
+      dockerfile: Dockerfile
+    container_name: gamestack-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/gamestack
+      - JWT_SECRET=your_jwt_secret_key_here_make_it_long_and_secure_at_least_64_characters_long_for_hs512_algorithm
+      - PORT=3001
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - gamestack-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gamestack-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001/api
+    depends_on:
+      - backend
+    networks:
+      - gamestack-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  gamestack-network:
+    driver: bridge
+
