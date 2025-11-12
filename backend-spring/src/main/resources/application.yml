@@ -12,6 +12,7 @@ spring:
       uri: ${MONGODB_URI:mongodb://localhost:27017/gamestack}
       auto-index-creation: false
   
+  # Mail configuration - optional, won't crash if not configured
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -26,6 +27,8 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+    # Prevent connection test on startup (prevents crashes)
+    test-connection: false
   
   security:
     jwt:

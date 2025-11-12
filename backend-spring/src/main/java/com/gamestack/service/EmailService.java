@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
     
+    // Mail sender will be null if mail is not configured - that's OK
     @Autowired(required = false)
     private JavaMailSender mailSender;
     
