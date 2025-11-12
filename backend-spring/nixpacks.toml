@@ -1,9 +1,15 @@
 # Nixpacks configuration for Railway
-# This tells Railway this is a Java/Maven project
+# This explicitly tells Nixpacks this is a Java/Maven project
 
-[providers]
-maven = "detect"
+[phases.setup]
+nixPkgs = ["jdk17", "maven"]
 
-[variables]
-JAVA_VERSION = "17"
+[phases.install]
+cmds = ["mvn dependency:go-offline -B"]
+
+[phases.build]
+cmds = ["mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -jar target/gamestack-backend-1.0.0.jar"
 

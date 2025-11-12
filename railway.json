@@ -1,7 +1,8 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    "rootDirectory": "backend-spring"
   },
   "deploy": {
     "startCommand": "java -jar target/gamestack-backend-1.0.0.jar"
