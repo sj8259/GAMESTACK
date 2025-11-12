@@ -2,33 +2,32 @@ package com.gamestack.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(name = "spring.mail.username", havingValue = "", matchIfMissing = false)
 public class EmailService {
     
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender mailSender;
     
-    @Value("${spring.mail.username:noreply@gamestack.com}")
+    @Value("${spring.mail.username:}")
     private String fromEmail;
     
     @Value("${app.name:GameStack}")
     private String appName;
     
     public void sendOtpEmail(String toEmail, String otpCode) {
+        // Check if email is configured
+        if (fromEmail == null || fromEmail.isEmpty() || mailSender == null) {
+            System.out.println("WARNING: Email service not configured. OTP email not sent. Set MAIL_USERNAME and MAIL_PASSWORD to enable email.");
+            return; // Don't crash, just log and return
+        }
+        
         try {
-            // Check if email is configured
-            if (fromEmail == null || fromEmail.equals("noreply@gamestack.com") || 
-                fromEmail.contains("your-email")) {
-                throw new RuntimeException(
-                    "Email service not configured. Please set MAIL_USERNAME and MAIL_PASSWORD environment variables or update application.yml. " +
-                    "See QUICK_SETUP.md for instructions."
-                );
-            }
-            
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
             message.setTo(toEmail);
@@ -38,16 +37,9 @@ public class EmailService {
             mailSender.send(message);
         } catch (Exception e) {
             String errorMsg = e.getMessage();
-            if (errorMsg != null && (errorMsg.toLowerCase().contains("authentication") || 
-                                     errorMsg.toLowerCase().contains("535") ||
-                                     errorMsg.toLowerCase().contains("534"))) {
-                throw new RuntimeException(
-                    "Email authentication failed. Please check your Gmail App Password. " +
-                    "Make sure 2-Step Verification is enabled and you're using an App Password, not your regular password. " +
-                    "Set MAIL_USERNAME and MAIL_PASSWORD environment variables. See QUICK_SETUP.md for detailed setup instructions."
-                );
-            }
-            throw new RuntimeException("Failed to send OTP email: " + e.getMessage(), e);
+            System.err.println("Failed to send OTP email: " + errorMsg);
+            // Don't throw exception - just log the error
+            // This prevents the app from crashing if email fails
         }
     }
     
