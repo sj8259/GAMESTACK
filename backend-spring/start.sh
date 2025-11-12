@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Startup script for Railway deployment
 # Finds and runs the Spring Boot JAR file
 
@@ -64,5 +64,5 @@ fi
 
 echo "Found JAR file: $JAR_FILE"
 echo "Starting application..."
-java -jar "$JAR_FILE"
+exec java -jar "$JAR_FILE"
 
