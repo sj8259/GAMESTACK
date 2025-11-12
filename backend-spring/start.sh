@@ -38,7 +38,8 @@ fi
 # Try searching from root
 if [ -z "$JAR_FILE" ]; then
     echo "Searching for JAR files recursively..."
-    JAR_FILE=$(find . -name "*.jar" -not -name "*.original" -path "*/target/*" 2>/dev/null | head -1)
+    # Look for any jar (not just under target/) because Nixpacks may copy the jar to the image root as app.jar
+    JAR_FILE=$(find . -name "*.jar" -not -name "*.original" 2>/dev/null | head -1)
 fi
 
 if [ -z "$JAR_FILE" ]; then
