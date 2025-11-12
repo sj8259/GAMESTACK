@@ -1,2 +1,2 @@
-web: java -jar target/gamestack-backend-1.0.0.jar
+web: sh start.sh || java -jar target/gamestack-backend-1.0.0.jar
 
