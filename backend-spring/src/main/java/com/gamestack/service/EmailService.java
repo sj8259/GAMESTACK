@@ -8,7 +8,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-@ConditionalOnProperty(name = "spring.mail.username", havingValue = "", matchIfMissing = false)
 public class EmailService {
     
     @Autowired(required = false)
