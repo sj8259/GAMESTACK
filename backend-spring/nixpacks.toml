@@ -8,8 +8,8 @@ nixPkgs = ["jdk17", "maven"]
 cmds = ["mvn dependency:go-offline -B"]
 
 [phases.build]
-cmds = ["mvn clean package -DskipTests"]
+cmds = ["mvn clean package -DskipTests", "ls -la target/ || echo 'Target directory not found'"]
 
 [start]
-cmd = "sh start.sh"
+cmd = "bash start.sh"
 

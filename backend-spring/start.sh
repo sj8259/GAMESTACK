@@ -2,10 +2,22 @@
 # Startup script for Railway deployment
 # Finds and runs the Spring Boot JAR file
 
+set -e  # Exit on error
+
 echo "=== Railway Startup Script ==="
 echo "Current directory: $(pwd)"
 echo "Listing current directory:"
 ls -la
+
+echo ""
+echo "Checking if target directory exists..."
+if [ -d "target" ]; then
+    echo "Target directory found!"
+    echo "Contents of target directory:"
+    ls -la target/
+else
+    echo "WARNING: Target directory not found in current location"
+fi
 
 echo ""
 echo "Looking for JAR files..."
