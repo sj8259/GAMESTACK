@@ -2,8 +2,6 @@
 # Startup script for Railway deployment
 # Finds and runs the Spring Boot JAR file
 
-set -e  # Exit on error
-
 echo "=== Railway Startup Script ==="
 echo "Current directory: $(pwd)"
 echo "Listing current directory:"
