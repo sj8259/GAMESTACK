@@ -4,7 +4,10 @@
 [build]
 builder = "NIXPACKS"
 rootDirectory = "backend-spring"
+# Note: buildCommand is defined in backend-spring/nixpacks.toml
 
 [deploy]
 startCommand = "java -jar target/gamestack-backend-1.0.0.jar"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
 
