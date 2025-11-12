@@ -11,5 +11,5 @@ cmds = ["mvn dependency:go-offline -B"]
 cmds = ["mvn clean package -DskipTests"]
 
 [start]
-cmd = "java -jar target/gamestack-backend-1.0.0.jar"
+cmd = "sh start.sh"
 
