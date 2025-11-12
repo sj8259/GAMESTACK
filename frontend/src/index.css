@@ -1,9 +1,9 @@
+/* Star Wars Font Imports - Industrial/Futuristic with worn look - Must be first */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Star Wars Font Imports - Industrial/Futuristic with worn look */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   * {

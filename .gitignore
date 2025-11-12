@@ -51,3 +51,12 @@ data/
 
 # Railway
 .railway
+
+# Deployment variables with sensitive data
+railway-variables.txt
+vercel-variables.txt
+*-variables.txt
+DEPLOYMENT-VARIABLES.md
+DEPLOY-CONFIG.md
+*.secret
+*.credentials

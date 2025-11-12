@@ -1,0 +1,6 @@
+# Vercel Environment Variables Example
+# Copy this file to vercel-variables.txt and fill in your actual values
+# DO NOT COMMIT vercel-variables.txt to git!
+
+VITE_API_URL=https://your-backend.railway.app/api
+

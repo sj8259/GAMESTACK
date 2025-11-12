@@ -1,0 +1,9 @@
+# Nixpacks configuration for Railway
+# This tells Railway this is a Java/Maven project
+
+[providers]
+maven = "detect"
+
+[variables]
+JAVA_VERSION = "17"
+

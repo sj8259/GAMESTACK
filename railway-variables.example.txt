@@ -1,0 +1,12 @@
+# Railway Environment Variables Example
+# Copy this file to railway-variables.txt and fill in your actual values
+# DO NOT COMMIT railway-variables.txt to git!
+
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/gamestack?retryWrites=true&w=majority
+
+JWT_SECRET=your-secure-jwt-secret-key-64-characters-minimum-generate-using-openssl-rand-base64-64
+
+CORS_ALLOWED_ORIGINS=https://your-frontend.vercel.app
+
+PORT=3001
+
